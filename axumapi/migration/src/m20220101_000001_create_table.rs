@@ -43,5 +43,5 @@ enum User {
     Email,
     Password,
     CreatedAt,
-    Uuid,
+    Uuid
 }
