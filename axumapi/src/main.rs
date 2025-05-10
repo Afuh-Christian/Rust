@@ -74,24 +74,18 @@ async fn login_user_post(
      .filter( Condition::all()
         .add(user::Column::Email.eq(payload.email))
         .add(user::Column::Password.eq(payload.password))
-     ).one(&db).await.unwrap().unwrap();
+     ).one(&db)
+     .await.unwrap().unwrap();
 
+    // let data: UserModel = UserModel{
+    //     name: user_model.name,
+    //     email: user_model.email,
+    //     password: user_model.password,
+    //     uuid: user_model.uuid,
+    //     created_at: user_model.created_at,
+    //     };
 
-    //  if let Some(user_model) = user_model {
-    //     let data = UserModel::new(user_model);
-    //     // do something with `data`
-    // } else {
-    //     // handle the case where user_model is None
-    // }
-   
-
-    let data: UserModel = UserModel{
-        name: user_model.name,
-        email: user_model.email,
-        password: user_model.password,
-        uuid: user_model.uuid,
-        created_at: user_model.created_at,
-        };
+    let data: UserModel = UserModel::new(user_model);
 
 
    db.close().await.unwrap();
