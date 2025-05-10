@@ -66,7 +66,7 @@ async fn main() -> Result<(),MainError> {
     let address: String = (*utils::constants::ADDRESS).clone();
     let database_url: String = (*utils::constants::DATABASE_URL).clone();
 
-    println!("Port Number : {} " , port);
+    println!("Port Number : {} " , database_url);
 
 
     let db: DatabaseConnection = Database::connect(database_url).await.map_err(|err |MainError{message : err.to_string()})?;

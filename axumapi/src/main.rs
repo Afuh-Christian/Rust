@@ -77,8 +77,14 @@ async fn login_user_post(
      ).one(&db).await.unwrap().unwrap();
 
 
-    // let data = UserModel::from(user_model);
-    
+    //  if let Some(user_model) = user_model {
+    //     let data = UserModel::new(user_model);
+    //     // do something with `data`
+    // } else {
+    //     // handle the case where user_model is None
+    // }
+   
+
     let data: UserModel = UserModel{
         name: user_model.name,
         email: user_model.email,
@@ -88,9 +94,9 @@ async fn login_user_post(
         };
 
 
-    db.close().await.unwrap();
-   (StatusCode::CREATED , Json(data)) //, user.name.to_string() , user.email.to_string() , user.password.to_string() , user.created_at.to_string() , user.uuid.to_string()
+   db.close().await.unwrap();
 
+   (StatusCode::CREATED , Json(data))
 
 }
 

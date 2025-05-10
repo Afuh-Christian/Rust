@@ -4,7 +4,7 @@ use entity::user;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Serialize,Deserialize, Clone , From )] // for viewing data ... allows cloning
+#[derive(Serialize,Deserialize, Clone )] // for viewing data ... allows cloning
 pub struct UserModel{
 pub name: String,
 pub email: String,
@@ -14,8 +14,8 @@ pub created_at: NaiveDateTime
 }
 
 
-impl From<user::Model> for UserModel {
-    fn from(model: user::Model) -> Self {
+impl UserModel {
+   pub fn new(model: user::Model) -> Self {
         Self {
             name: model.name,
             email: model.email,
