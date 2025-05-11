@@ -1,8 +1,8 @@
 use axum::{
-    http::StatusCode, response::IntoResponse, routing::{get, post}, Json, Router
+    extract::Path, http::StatusCode, response::IntoResponse, routing::{get, post, put}, Json, Router
 };
-use entity::user;
-use models::user_model::{self, CreateUser, LoginUser, UserModel};
+use entity::user::{self, ActiveModel, Model};
+use models::user_model::{ CreateUser, LoginUser, UpdateUser, UserModel};
 use sea_orm::{ sqlx::types::chrono::Utc, ActiveValue::Set, Condition, Database, DatabaseConnection};
 use uuid::Uuid;
 // use sea_orm::ActiveValue::Set;
@@ -22,7 +22,8 @@ async fn main() {
     let app = Router::new()
     .route("/", get(|| async { "Hello, World!" }))
     .route("/user/create", post(create_user_post))
-    .route("/user/login", post(login_user_post));
+    .route("/user/login", post(login_user_post))
+    .route("/user/update/{uuid}", put(update_user_post));
 
     let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
 
@@ -62,6 +63,9 @@ async fn create_user_post(
 
 
 }
+
+
+
 async fn login_user_post(
     Json(payload): Json<LoginUser>, // payload of type Json of structure CreateUser
 ) -> impl IntoResponse {
@@ -93,6 +97,47 @@ async fn login_user_post(
    (StatusCode::CREATED , Json(data))
 
 }
+
+
+
+
+async fn update_user_post(
+    Path(uuid) : Path<Uuid> , 
+    Json(payload): Json<UpdateUser>, // payload of type Json of structure CreateUser
+) -> impl IntoResponse {
+
+    let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
+
+    let db: DatabaseConnection = Database::connect( database_url).await.unwrap();
+
+     let mut user_model:ActiveModel = user::Entity::find()
+     .filter( user::Column::Uuid.eq(uuid)
+     ).one(&db)
+     .await.unwrap().unwrap().into();
+
+    // .into converts the model to an activeModel 
+    // add mut to change the fields .
+
+    // it this form you can update ... 
+
+    user_model.name = Set(payload.name); 
+
+    let user_data: Model = user_model.clone().try_into().unwrap();
+
+    let data: UserModel = UserModel::new(user_data);
+
+    user_model.update(&db).await.unwrap();
+
+
+
+   db.close().await.unwrap();
+
+   (StatusCode::ACCEPTED , Json(data))
+
+}
+
+
+
 
 // async fn create_user() -> impl IntoResponse {
 

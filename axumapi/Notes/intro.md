@@ -29,3 +29,38 @@ axum = "0.8.4"
  - very important package .. check it out 
 
  
+
+
+ ## Path .. 
+
+```rs
+
+// in the handler parameter
+ Path(uuid) : Path<Uuid> 
+
+// with {}
+ .route("/user/update/{uuid}", put(update_user_post));
+
+```
+
+ `http://localhost:3000/user/update/cb4116fd-8cf6-4faa-b52a-fe87ff85b372`
+
+
+
+
+
+## Query Params 
+
+
+```rs
+
+// in the handler parameter
+Query(params): Query<QueryParams>,
+
+// without {}
+.route("/user/update-user", post(update_user_post))
+
+```
+
+ `POST http://localhost:3000/user/update-user?uuid=cb4116fd-8cf6-4faa-b52a-fe87ff85b372`
+
