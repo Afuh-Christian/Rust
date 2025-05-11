@@ -64,3 +64,14 @@ Query(params): Query<QueryParams>,
 
  `POST http://localhost:3000/user/update-user?uuid=cb4116fd-8cf6-4faa-b52a-fe87ff85b372`
 
+
+
+### Into and try_into 
+
+```rs
+
+.into() // .. convert one type to another .. fallible .. returns new type 
+
+.try_into() // .. convert one type to another .. infallible .. returns Result<_ , _>
+
+```

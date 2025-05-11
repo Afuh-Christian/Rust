@@ -1,8 +1,8 @@
 use axum::{
-    extract::Path, http::StatusCode, response::IntoResponse, routing::{get, post, put}, Json, Router
+    extract::Path, http::StatusCode, response::IntoResponse, routing::{delete, get, post, put}, Json, Router
 };
 use entity::user::{self, ActiveModel, Model};
-use models::user_model::{ CreateUser, LoginUser, UpdateUser, UserModel};
+use models::user_model::{ self, CreateUser, LoginUser, UpdateUser, UserModel};
 use sea_orm::{ sqlx::types::chrono::Utc, ActiveValue::Set, Condition, Database, DatabaseConnection};
 use uuid::Uuid;
 // use sea_orm::ActiveValue::Set;
@@ -23,7 +23,8 @@ async fn main() {
     .route("/", get(|| async { "Hello, World!" }))
     .route("/user/create", post(create_user_post))
     .route("/user/login", post(login_user_post))
-    .route("/user/update/{uuid}", put(update_user_post));
+    .route("/user/update/{uuid}", put(update_user_post))
+    .route("/user/delete/{uuid}", delete(delete_user));
 
     let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
 
@@ -162,3 +163,39 @@ async fn update_user_post(
 
 
 // }
+
+
+
+pub async fn delete_user(
+    Path(uuid) : Path<Uuid>
+) -> impl IntoResponse {
+
+
+    let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
+
+    let db: DatabaseConnection = Database::connect( database_url).await.unwrap();
+
+
+    let user_model  =  entity::user::Entity::find().filter(user::Column::Uuid.eq(uuid)).one(&db).await.unwrap().unwrap();
+
+    
+    user::Entity::delete_by_id(user_model.id).exec(&db).await.unwrap();
+
+    // WE could still use the name because only the ownership of id was transferred .. 
+
+    (StatusCode::ACCEPTED , format!("Deleted {}", user_model.name))
+
+}
+
+
+pub async fn all_users() -> impl IntoResponse {
+
+    let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
+
+    let db: DatabaseConnection = Database::connect( database_url).await.unwrap();
+
+    let all_user : Vec<UserModel> =  entity::user::Entity::find().all(&db).await.unwrap().into_iter().map(|item|UserModel::new(item)).collect();
+
+    (StatusCode::ACCEPTED , Json(all_user))
+
+}
