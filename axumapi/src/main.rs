@@ -22,6 +22,7 @@ async fn main() {
     let app = Router::new()
     .route("/", get(|| async { "Hello, World!" }))
     .route("/user/create", post(create_user_post))
+    .route("/user/all", get(all_users))
     .route("/user/login", post(login_user_post))
     .route("/user/update/{uuid}", put(update_user_post))
     .route("/user/delete/{uuid}", delete(delete_user));
