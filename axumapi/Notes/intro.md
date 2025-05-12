@@ -92,3 +92,35 @@ Query(params): Query<QueryParams>,
 .try_into() // .. convert one type to another .. infallible .. returns Result<_ , _>
 
 ```
+
+
+
+
+
+
+
+
+### Error handling 
+
+```rs 
+
+// unrapp() 
+.unwrap()
+
+.unwrap_or(T) // where T is the type that was supposed to be returned .
+
+//map_err() for returns like Result<T,k>  and returns Result<T,K>
+.map_err(|e|T)
+
+// returns T
+.map_err(|e|T)? 
+
+//ok_or()  for returns like Option<T> and returns Option<T>
+.ok_or(T)
+
+// returns T 
+.ok_or(T)?
+
+
+
+```
