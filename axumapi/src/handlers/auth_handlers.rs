@@ -1,3 +1,4 @@
+use axum::Extension;
 use axum::{http::StatusCode, response::IntoResponse, Json};
 use chrono::Utc;
 use entity::user;
@@ -12,12 +13,9 @@ use sea_orm::QueryFilter;
 
 
 pub async fn create_user_post(
+    Extension(db) : Extension<DatabaseConnection>,
     Json(payload): Json<CreateUser>, // payload of type Json of structure CreateUser
 ) -> impl IntoResponse {
-
-    let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
-
-    let db: DatabaseConnection = Database::connect( database_url).await.unwrap();
 
     let user_model = user::ActiveModel {
         // id: Set(0),
@@ -40,12 +38,10 @@ pub async fn create_user_post(
 
 
 pub async fn login_user_post(
+    Extension(db) : Extension<DatabaseConnection>,
     Json(payload): Json<LoginUser>, // payload of type Json of structure CreateUser
 ) -> impl IntoResponse {
 
-    let database_url = "postgres://postgres:password@localhost:5432/axum_db?schema=public";
-
-    let db: DatabaseConnection = Database::connect( database_url).await.unwrap();
 
      let user_model = user::Entity::find()
      .filter( Condition::all()

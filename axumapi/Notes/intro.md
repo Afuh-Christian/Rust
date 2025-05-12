@@ -13,6 +13,10 @@ cargo add tokio -F full
 # for cors 
 cargo add tower-http 
 
+# for .envs 
+cargo add lazy_static
+cargo add dotenv
+
 
  ```
 
