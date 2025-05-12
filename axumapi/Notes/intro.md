@@ -17,8 +17,14 @@ cargo add tower-http
 cargo add lazy_static
 cargo add dotenv
 
+# error handling
+cargo add serde_json
+
+
 
  ```
+
+
 
  ```toml
 [package]
@@ -29,6 +35,9 @@ edition = "2024"
 [dependencies]
 axum = "0.8.4"
  ```
+
+
+
 
 
 

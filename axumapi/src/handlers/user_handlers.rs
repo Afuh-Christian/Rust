@@ -6,6 +6,7 @@ use sea_orm::{ActiveValue::Set, DatabaseConnection, EntityTrait};
 use uuid::Uuid;
 
 use crate::models::user_model::{UpdateUser, UserModel};
+use crate::utils::api_errors::ApiError;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::QueryFilter;
@@ -17,12 +18,19 @@ pub async fn update_user_post(
     Extension(db) : Extension<DatabaseConnection>,
     Path(uuid) : Path<Uuid> , 
     Json(payload): Json<UpdateUser>, // payload of type Json of structure CreateUser
-) -> impl IntoResponse {
+) -> Result<Json<UserModel> , ApiError> {
 
      let mut user_model:ActiveModel = user::Entity::find()
      .filter( user::Column::Uuid.eq(uuid)
      ).one(&db)
-     .await.unwrap().unwrap().into();
+     .await
+    //  .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
+    //  .ok_or(ApiError{message : String::from("Not Found") , status_code: StatusCode::NOT_FOUND , error_code:Some(44)})?
+
+     .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
+     .ok_or(ApiError{message: "Not Found".to_string() , status_code:StatusCode::NOT_FOUND , error_code:Some(44)})?
+    
+     .into();
 
     // .into converts the model to an activeModel 
     // add mut to change the fields .
@@ -30,18 +38,19 @@ pub async fn update_user_post(
     // it this form you can update ... 
 
     user_model.name = Set(payload.name); 
-
-    let user_data: Model = user_model.clone().try_into().unwrap();
+    let user_data: Model = user_model.clone()
+    .try_into().map_err(|err| ApiError{message:"Error converting ActiveModel to model".to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
     let data: UserModel = UserModel::new(user_data);
 
-    user_model.update(&db).await.unwrap();
+    user_model.update(&db).await
+    .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
+    db.close().await
+    .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
+    Ok( Json(data))
 
-   db.close().await.unwrap();
-
-   (StatusCode::ACCEPTED , Json(data))
 
 }
 
@@ -51,21 +60,27 @@ pub async fn update_user_post(
 pub async fn delete_user(
        Extension(db) : Extension<DatabaseConnection>,
     Path(uuid) : Path<Uuid>
-) -> impl IntoResponse {
-    let user_model  =  entity::user::Entity::find().filter(user::Column::Uuid.eq(uuid)).one(&db).await.unwrap().unwrap();
-    user::Entity::delete_by_id(user_model.id).exec(&db).await.unwrap();
+) -> Result<String , ApiError> {
+    let user_model  =  entity::user::Entity::find().filter(user::Column::Uuid.eq(uuid)).one(&db).await
+     .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
+     .ok_or(ApiError{message: "Not Found".to_string() , status_code:StatusCode::NOT_FOUND , error_code:Some(44)})?;
+    
+    // .unwrap().unwrap();
+    user::Entity::delete_by_id(user_model.id).exec(&db).await
+    .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
     // WE could still use the name because only the ownership of id was transferred .. 
-    (StatusCode::ACCEPTED , format!("Deleted {}", user_model.name))
-
+    Ok(format!("Deleted {}", user_model.name))
 }
 
 
 pub async fn all_users(
        Extension(db) : Extension<DatabaseConnection>
-) -> impl IntoResponse {
+) -> Result<Json<Vec<UserModel>> , ApiError> {
 
-    let all_user : Vec<UserModel> =  entity::user::Entity::find().all(&db).await.unwrap().into_iter().map(|item|UserModel::new(item)).collect();
+    let all_user : Vec<UserModel> =  entity::user::Entity::find().all(&db).await
+    .map_err(|err|ApiError{message: err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
+    .into_iter().map(|item|UserModel::new(item)).collect();
 
-    (StatusCode::ACCEPTED , Json(all_user))
+    Ok(Json(all_user))
 
 }
