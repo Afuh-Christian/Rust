@@ -10,6 +10,10 @@ cargo add axum
 # cargo add axum -F headers
 cargo add tokio 
 cargo add tokio -F full
+# for cors 
+cargo add tower-http 
+
+
  ```
 
  ```toml
