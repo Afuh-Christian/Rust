@@ -46,8 +46,8 @@ pub async fn create_user_post(
     user_model.insert(&db).await
    .map_err(|err| ApiError{message:err.to_string(), status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code: Some(50)})?;
 
-    db.close().await
-    .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code: Some(40)})?;
+    // db.close().await
+    // .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code: Some(40)})?;
    
    Ok("User created".to_string()) //, user.name.to_string() , user.email.to_string() , user.password.to_string() , user.created_at.to_string() , user.uuid.to_string()
 
@@ -77,8 +77,8 @@ pub async fn login_user_post(
    
     let data: UserModel = UserModel::new(user_model);
 
-      db.close().await
-          .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
+    //   db.close().await
+    //       .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
 
    Ok(Json(data))

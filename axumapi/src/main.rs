@@ -13,8 +13,8 @@ async fn main() {
     // build our application with a single route
 
     // connect database ... 
-    let db_url = utils::constants::DATABASE_URL.clone();
-    let db: DatabaseConnection = Database::connect(db_url).await.unwrap();
+    let db_url = (*utils::constants::DATABASE_URL).clone();
+    let db: DatabaseConnection = Database::connect(db_url).await.expect("Failed to connect to db");
 
     // routes .. 
     let app = Router::new()

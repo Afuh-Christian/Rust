@@ -46,8 +46,8 @@ pub async fn update_user_post(
     user_model.update(&db).await
     .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
-    db.close().await
-    .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
+    // db.close().await
+    // .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
     Ok( Json(data))
 
@@ -70,8 +70,8 @@ pub async fn delete_user(
     .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
     // WE could still use the name because only the ownership of id was transferred .. 
     
-    db.close().await
-    .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
+    // db.close().await
+    // .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
     
     Ok(format!("Deleted {}", user_model.name))
@@ -86,10 +86,8 @@ pub async fn all_users(
     .map_err(|err|ApiError{message: err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
     .into_iter().map(|item|UserModel::new(item)).collect();
 
-    db.close().await
-    .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
-
+    // db.close().await
+    // .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
     Ok(Json(all_user))
-
 }
