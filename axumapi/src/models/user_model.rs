@@ -44,6 +44,13 @@ pub password: String,
 }
 
 
+
+#[derive(Serialize,Deserialize)]
+pub struct LoginUserResponseModel {
+pub token: String
+}
+
+
 #[derive(Serialize,Deserialize)]
 pub struct UpdateUser{
 pub name: String,

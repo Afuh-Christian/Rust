@@ -16,7 +16,7 @@ pub async fn guard(mut req: Request<Body> , next: Next) -> Result<Response , Api
         .ok_or(ApiError{message: "Auth error".to_owned(), status_code:StatusCode::UNAUTHORIZED , error_code:Some(48)})?
         .to_str()
         .map_err(|_| ApiError{message: "Unable to convert format".to_owned(), status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(44)})?
-        .strip_prefix("Bearer")
+        .strip_prefix("Bearer ")
         .ok_or(ApiError{message: "Error getting token".to_owned(), status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(34)})?;
 
     let claims = decode_jwt(format!("{}",token)).map_err(|_|ApiError{

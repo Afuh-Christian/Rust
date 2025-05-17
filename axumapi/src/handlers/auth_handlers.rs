@@ -5,9 +5,10 @@ use entity::user;
 use sea_orm::{ActiveValue::Set, Condition, DatabaseConnection, EntityTrait};
 use uuid::Uuid;
 
-use crate::models::user_model::UserModel;
+use crate::models::user_model::{LoginUserResponseModel, UserModel};
 use crate::models::user_model::{CreateUser, LoginUser};
 use crate::utils::api_errors::ApiError;
+use crate::utils::jwts::encode_jwt;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::QueryFilter;
@@ -61,7 +62,7 @@ pub async fn create_user_post(
 pub async fn login_user_post(
     Extension(db) : Extension<DatabaseConnection>,
     Json(payload): Json<LoginUser>, // payload of type Json of structure CreateUser
-) -> Result<Json<UserModel> , ApiError> {
+) -> Result<Json<LoginUserResponseModel> , ApiError> {
 
 
      let user_model = user::Entity::find()
@@ -77,11 +78,18 @@ pub async fn login_user_post(
    
     let data: UserModel = UserModel::new(user_model);
 
+   
+    let encoded_token  = encode_jwt(data.email).map_err(|err|ApiError{status_code:StatusCode::INTERNAL_SERVER_ERROR , message: "Failed to encode credentials".to_owned() , error_code : Some(50)})?;
+    
+     let login_model = LoginUserResponseModel{
+        token : encoded_token
+    }; 
+    
     //   db.close().await
     //       .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
 
 
-   Ok(Json(data))
+   Ok(Json(login_model))
 
 }
 

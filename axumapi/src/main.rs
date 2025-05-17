@@ -1,4 +1,4 @@
-use axum::{ routing::get, Extension, Router
+use axum::{ middleware, routing::get, Extension, Router
 };
 use sea_orm::{  Database, DatabaseConnection};
 
@@ -19,9 +19,10 @@ async fn main() {
     // routes .. 
     let app = Router::new()
     .route("/", get(|| async { "Hello, World!" }))
-    .merge(routes::auth_routes::auth_routes())
     .merge(routes::user_routes::user_routes())
-    .layer(Extension(db)); // database
+    .route_layer(middleware::from_fn(utils::guard::guard)) // Apply this middleware here so it only affects the routes above ...
+    .merge(routes::auth_routes::auth_routes())
+    .layer(Extension(db.clone())); // database
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
