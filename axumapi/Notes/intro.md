@@ -21,6 +21,9 @@ cargo add dotenv
 cargo add serde_json
 
 
+# json web token / authentication
+cargo add jsonwebtoken
+cargo add serde -F derive
 
  ```
 
