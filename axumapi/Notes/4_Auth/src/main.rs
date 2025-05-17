@@ -20,7 +20,6 @@ async fn main() {
     let app = Router::new()
     .route("/", get(|| async { "Hello, World!" }))
     .merge(routes::user_routes::user_routes())
-    .merge(routes::home_routes::home_routes())
     .route_layer(middleware::from_fn(utils::guard::guard)) // Apply this middleware here so it only affects the routes above ...
     .merge(routes::auth_routes::auth_routes())
     .layer(Extension(db.clone())); // database

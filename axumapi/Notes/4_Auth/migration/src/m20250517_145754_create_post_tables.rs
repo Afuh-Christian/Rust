@@ -7,19 +7,16 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        // todo!();
+        todo!();
 
         manager
             .create_table(
                 Table::create()
-                    .table(User::Table)
+                    .table(Post::Table)
                     .if_not_exists()
-                    .col(pk_auto(User::Id).not_null().auto_increment())
-                    .col(string(User::Name).not_null())
-                    .col(string(User::Email).not_null())
-                    .col(string(User::Password).not_null())
-                    .col(date_time(User::CreatedAt).not_null())
-                    .col(uuid(User::Uuid).not_null())
+                    .col(pk_auto(Post::Id))
+                    .col(string(Post::Title))
+                    .col(string(Post::Text))
                     .to_owned(),
             )
             .await
@@ -27,21 +24,18 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        // todo!();
+        todo!();
 
         manager
-            .drop_table(Table::drop().table(User::Table).to_owned())
+            .drop_table(Table::drop().table(Post::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-pub enum User {
+enum Post {
     Table,
     Id,
-    Name,
-    Email,
-    Password,
-    CreatedAt,
-    Uuid
+    Title,
+    Text,
 }

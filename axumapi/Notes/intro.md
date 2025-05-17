@@ -100,14 +100,11 @@ Query(params): Query<QueryParams>,
 
 
 
-
-
-
 ### Error handling 
 
 ```rs 
 
-// unrapp() 
+// unwrap() 
 .unwrap()
 
 .unwrap_or(T) // where T is the type that was supposed to be returned .
@@ -123,6 +120,5 @@ Query(params): Query<QueryParams>,
 
 // returns T 
 .ok_or(T)?
-
 
 ```
