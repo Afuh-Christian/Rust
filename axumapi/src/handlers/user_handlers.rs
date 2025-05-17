@@ -1,6 +1,6 @@
 use axum::extract::Path;
 use axum::Extension;
-use axum::{http::StatusCode, response::IntoResponse, Json};
+use axum::{http::StatusCode, Json};
 use entity::user::{self, ActiveModel, Model};
 use sea_orm::{ActiveValue::Set, DatabaseConnection, EntityTrait};
 use uuid::Uuid;
@@ -26,10 +26,8 @@ pub async fn update_user_post(
      .await
     //  .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
     //  .ok_or(ApiError{message : String::from("Not Found") , status_code: StatusCode::NOT_FOUND , error_code:Some(44)})?
-
      .map_err(|err| ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
      .ok_or(ApiError{message: "Not Found".to_string() , status_code:StatusCode::NOT_FOUND , error_code:Some(44)})?
-    
      .into();
 
     // .into converts the model to an activeModel 

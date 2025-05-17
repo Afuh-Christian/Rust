@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Post::Table)
                     .if_not_exists()
-                    .col(pk_auto(Post::Id).not_null())
+                    .col(pk_auto(Post::Id).auto_increment().not_null())
                     .col(uuid(Post::Uuid).unique_key().not_null())
                     .col(string(Post::Title).not_null())
                     .col(string(Post::Text).not_null())

@@ -35,7 +35,7 @@ pub async fn create_user_post(
         // id: Set(0),
         name: Set(payload.name.to_owned()) , //, You, 1 second ago * Uncommitted changes
         email: Set(payload.email.to_owned()),
-        password: Set(payload.email.to_owned()),
+        password: Set(payload.password.to_owned()),
         uuid: Set(Uuid::new_v4()),
         created_at: Set(Utc::now().naive_utc()),
         ..Default::default()

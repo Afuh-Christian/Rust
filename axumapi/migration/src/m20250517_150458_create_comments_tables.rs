@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Comment::Table)
                     .if_not_exists()
-                    .col(pk_auto(Comment::Id).not_null())
+                    .col(pk_auto(Comment::Id).auto_increment().not_null())
                     .col(integer(Comment::UserId).not_null())
                     .col(integer(Comment::PostId).not_null())
                     .col(date_time(Comment::CreatedAt).not_null())

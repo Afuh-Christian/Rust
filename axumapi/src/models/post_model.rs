@@ -1,7 +1,5 @@
-use chrono::{DateTime, NaiveDateTime};
-use derive_more::From;
+use chrono::{ NaiveDateTime};
 use entity::post;
-use migration::value;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -58,8 +56,6 @@ impl PostModel {
 pub struct CreatePostModel{
     pub title: String,
     pub text: String,
-    pub image: String,
-    pub user_id: i32,
-    pub created_at: NaiveDateTime,
+    pub image: String
 }
 
