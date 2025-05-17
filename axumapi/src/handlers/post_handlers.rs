@@ -62,13 +62,15 @@ pub async fn single_post(
 
     let post_model = entity::post::Entity::find().filter(
         entity::post::Column::Uuid.eq(uuid)
-    ).one(&db).await
+    )
+    .find_also_related(entity::user::Entity)
+    .one(&db).await
     .map_err(|err|ApiError{message:err.to_string() , status_code: StatusCode::INTERNAL_SERVER_ERROR , error_code: Some(50)})?
-    .ok_or(ApiError{message: "Failed to get post".to_owned() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code: Some(54)})?;
+    .ok_or(ApiError{message: "Failed to get post".to_owned() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code: Some(54)})?
+    .into();
 
-    let post : PostModel = PostModel::new(post_model) ; 
+    // let post : PostModel = PostModel::new(post_model) ; 
 
-
-    Ok(Json(post))
+    Ok(Json(post_model))
 
 }

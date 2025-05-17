@@ -13,6 +13,13 @@ pub uuid: Uuid,
 pub created_at: NaiveDateTime
 }
 
+#[derive(Serialize,Deserialize )] // for viewing data ... allows cloning
+pub struct UserMicroModel{
+pub name: String,
+pub uuid: Uuid,
+}
+
+
 
 impl UserModel {
    pub fn new(model: user::Model) -> Self {
