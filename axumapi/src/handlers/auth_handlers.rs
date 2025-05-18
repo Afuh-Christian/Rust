@@ -59,6 +59,21 @@ pub async fn create_user_post(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 pub async fn login_user_post(
     Extension(db) : Extension<DatabaseConnection>,
     Json(payload): Json<LoginUser>, // payload of type Json of structure CreateUser

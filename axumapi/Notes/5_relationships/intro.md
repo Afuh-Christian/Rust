@@ -50,3 +50,5 @@ impl From<(entity::post::Model, Option<entity::user::Model>)> for PostModel {
 ## In this project . we did `Prebuilt relation ` 
 
 - Checkout `Custom relation joins` in the sea orm docs ... 
+
+
