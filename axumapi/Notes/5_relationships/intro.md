@@ -52,3 +52,9 @@ impl From<(entity::post::Model, Option<entity::user::Model>)> for PostModel {
 - Checkout `Custom relation joins` in the sea orm docs ... 
 
 
+
+## Serde json 
+
+- `Value` . A flexible type .. 
+
+
