@@ -27,7 +27,7 @@ tower = "0.5.2"
 tower-http = { version = "0.6.4", features = ["cors", "trace"] }
 tracing-subscriber = "0.3.19"
 uuid = { version = "1.16.0", features = ["serde", "v4"] } 
-validator = { version = "0.20.0", features = ["derive"] } 
+validator = { version = "0.20.0", features = ["derive"] }  
 ```
 
 ```sh
