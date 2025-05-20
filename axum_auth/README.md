@@ -1,0 +1,37 @@
+# Packages ..
+
+```toml 
+
+
+
+[package]
+name = "axum_auth"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+argon2 = "0.5.3"
+async-trait = "0.1.88"
+axum = "0.8.4"
+axum-extra = { version = "0.10.1", features = ["cookie"] }
+chrono = { version = "0.4.41", features = ["serde"] }
+dotenv = "0.15.0"
+jsonwebtoken = "9.3.1"
+lettre = "0.11.16"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+sqlx = { version = "0.8.5" , features = ["runtime-async-std-native-tls", "postgres" , "chrono" , "uuid"] }
+time = "0.3.41"
+tokio = { version = "1.45.0", features = ["full"] }
+tower = "0.5.2"
+tower-http = { version = "0.6.4", features = ["cors", "trace"] }
+tracing-subscriber = "0.3.19"
+uuid = { version = "1.16.0", features = ["serde", "v4"] } 
+validator = { version = "0.20.0", features = ["derive"] } 
+```
+
+```sh
+# install sqlx cli too
+cargo install sqlx-cli --no-default-features --features "native-tls , postgres"
+```
+
