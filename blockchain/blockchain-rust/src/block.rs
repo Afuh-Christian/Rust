@@ -58,7 +58,7 @@ impl Block {
             nonce: 0,
             height,
         };
-        block.run_proof_of_work()?;
+        block.run_proof_of_work()?; // to find this block 
         Ok(block)
     }
 

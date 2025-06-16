@@ -30,7 +30,7 @@ pub struct TXInput {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TXOutput {
     pub value: i32,
-    pub pub_key_hash: Vec<u8>,
+    pub pub_key_hash: Vec<u8>, // used to unlock the token
 }
 
 // TXOutputs collects TXOutput
