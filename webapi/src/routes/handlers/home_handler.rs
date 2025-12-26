@@ -1,4 +1,4 @@
-use actix_web::{get, web, Responder};
+use actix_web::{get, web};
 use sea_orm::{ConnectionTrait, QueryResult, Statement};
 
 use crate::utils::{api_response::{self, ApiResponse}, app_state::AppState};

@@ -56,6 +56,8 @@ async fn main() -> Result<(),MainError> {
         }
     }
 
+    
+
     // env logger 
     dotenv::dotenv().ok();
     env_logger::init();
@@ -66,6 +68,8 @@ async fn main() -> Result<(),MainError> {
     let address: String = (*utils::constants::ADDRESS).clone();
     let database_url: String = (*utils::constants::DATABASE_URL).clone();
 
+
+    
     println!("Port Number : {} " , database_url);
 
 

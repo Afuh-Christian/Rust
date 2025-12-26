@@ -80,12 +80,11 @@ pub async fn all_users(
        Extension(db) : Extension<DatabaseConnection>
 ) -> Result<Json<Vec<UserModel>> , ApiError> {
 
+
     let all_user : Vec<UserModel> =  entity::user::Entity::find().all(&db).await
     .map_err(|err|ApiError{message: err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?
     .into_iter().map(|item|UserModel::new(item)).collect();
-
-    // db.close().await
-    // .map_err(|err|ApiError{message:err.to_string() , status_code:StatusCode::INTERNAL_SERVER_ERROR , error_code:Some(50)})?;
-
     Ok(Json(all_user))
+
+    
 }

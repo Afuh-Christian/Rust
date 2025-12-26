@@ -20,9 +20,4 @@ impl IntoResponse for ApiError {
             Json(json!({"StatusCode":self.status_code.as_u16() , "ErrorCode":self.error_code , "Message" : self.message}))
     ).into_response()
     }
-
-
-
-
-
 }

@@ -1,3 +1,7 @@
+## Cargo.toml
+
+```rs
+
 [package]  
 name = "entity"  
 version = "0.1.0"  
@@ -16,3 +20,5 @@ serde = { version = "1", features = ["derive"] }
 #path = "../../../" # remove this line in your own project  
 version = "1.1.0" # sea-orm version  
 
+
+```

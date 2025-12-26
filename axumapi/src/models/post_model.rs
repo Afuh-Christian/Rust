@@ -36,21 +36,20 @@ impl From<(entity::post::Model, Option<entity::user::Model>)> for PostModel {
  }
 }
 
-impl PostModel {
-   pub fn new(model: post::Model) -> Self {
-        Self {
-            id: model.id,
-            title: model.title,
-            text: model.text,
-            image: model.image,
-            uuid: model.uuid,
-            user_id: model.user_id,
-            created_at: model.created_at,
-            user:None
-        }
-    }
-}
-
+// impl PostModel {
+//    pub fn new(model: post::Model) -> Self {
+//         Self {
+//             id: model.id,
+//             title: model.title,
+//             text: model.text,
+//             image: model.image,
+//             uuid: model.uuid,
+//             user_id: model.user_id,
+//             created_at: model.created_at,
+//             user:None
+//         }
+//     }
+// }
 
 #[derive(Serialize,Deserialize)]
 pub struct CreatePostModel{
