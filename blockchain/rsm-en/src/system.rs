@@ -1,19 +1,24 @@
 use std::collections::BTreeMap;
 
-use crate::types::{AccountId, BlockNumber, Nonce};
-
+use num::{CheckedAdd, CheckedSub, Integer, Zero};
 
 #[derive(Debug)]
-pub struct Pallet{
+pub struct Pallet<AccountId, Nonce, BlockNumber> {
     block_number: BlockNumber,  // number of blocks . 
     nonce: BTreeMap<AccountId , Nonce>, // count of transactions per account
 }
 
 
-impl Pallet {
+impl<AccountId, Nonce, BlockNumber> Pallet<AccountId, Nonce, BlockNumber> where 
+
+AccountId : Ord + Clone,
+Nonce : Copy + CheckedAdd + Zero + CheckedSub + Integer,
+BlockNumber : Copy + CheckedAdd + Zero + CheckedSub + Integer,
+
+{
     pub fn new() -> Self {
         Self {
-            block_number: 0,
+            block_number: BlockNumber::zero(),
             nonce: BTreeMap::new(),
         }
     }
@@ -24,7 +29,7 @@ impl Pallet {
 
     pub fn inc_block_number(&mut self) {
         // crashes on overflow 
-        self.block_number = self.block_number.checked_add(1).unwrap();
+        self.block_number = self.block_number.checked_add(&BlockNumber::one()).unwrap();
     }
 
     pub fn get_block_number(&self) -> BlockNumber {
@@ -32,12 +37,12 @@ impl Pallet {
     }
 
     pub fn inc_nonce(&mut self, account: &AccountId) {
-        let current_nonce = self.nonce.get(account).unwrap_or(&0);
-        self.nonce.insert(account.clone(), current_nonce + 1);
+        let current_nonce = *self.nonce.get(account).unwrap_or(&Nonce::zero());
+        self.nonce.insert(account.clone(), current_nonce + Nonce::one());
     }
 
     pub fn get_nonce(&self, account: &AccountId) -> Nonce {
-        *self.nonce.get(account).unwrap_or(&0)
+        *self.nonce.get(account).unwrap_or(&Nonce::zero())
     }
 
 }

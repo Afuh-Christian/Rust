@@ -1,16 +1,20 @@
 use std::collections::BTreeMap;
 
-use crate::types::{AccountId, Balance};
+use num::{CheckedAdd, CheckedSub, Zero};
+
 
 
 
 #[derive(Debug)]
-pub struct Pallet {
+pub struct Pallet<AccountId, Balance> {
      balances : BTreeMap<AccountId, Balance>,
 }
 
 
-impl Pallet {
+impl <AccountId, Balance> Pallet<AccountId, Balance> where 
+AccountId : Ord + Clone,
+Balance :  CheckedAdd + CheckedSub + Zero + Copy
+{
     pub fn new() -> Self {
         Self {
             balances: BTreeMap::new(),
@@ -22,13 +26,13 @@ impl Pallet {
     }
 
     pub fn balance(&self, account: &AccountId) -> Balance {   
-        *self.balances.get(account).unwrap_or(&0)
+        *self.balances.get(account).unwrap_or(&Balance::zero())
     }
 
     pub fn transfer(&mut self, from: &AccountId, to: &AccountId, amount: Balance) -> Result<(), &'static str> {
         
-        let from_balance = self.balance(&from).checked_sub(amount).ok_or("Insufficient balance")?;
-        let to_balance = self.balance(&to).checked_add(amount).ok_or("Overflow")?;
+        let from_balance = self.balance(&from).checked_sub(&amount).ok_or("Insufficient balance")?;
+        let to_balance = self.balance(&to).checked_add(&amount).ok_or("Overflow")?;
 
    
      self.set_balance(&from, from_balance);
