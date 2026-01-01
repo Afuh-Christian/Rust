@@ -5,9 +5,11 @@ mod runtime;
 mod system;
 mod types;
 
+type RunTimeType = RunTime<String, u32, u128, u32>;
+
 fn main() {
 
-    let mut runtime = RunTime::new();
+    let mut runtime: RunTimeType = RunTime::new();
 
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();
@@ -43,7 +45,7 @@ fn main() {
 
 #[test]
 fn test_runtime() {
-    let mut runtime = RunTime::new();
+    let mut runtime : RunTimeType = RunTime::new();
 
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();
