@@ -1,19 +1,12 @@
-use num::{CheckedAdd, CheckedSub, Integer, Zero};
-
-use crate::{balances, system};
+use crate::{balances, system, traits::Config};
 
 #[derive(Debug)]
-pub struct RunTime<AccountId , Nonce , Balance , BlockNumber>{
-  pub  balance : balances::Pallet<AccountId, Balance>, 
-    pub system : system::Pallet<AccountId, Nonce, BlockNumber>,
+pub struct RunTime<T:Config>{
+  pub  balance :balances::Pallet<T>, 
+  pub system : system::Pallet<T>,
 }
 
-impl <AccountId , Nonce , Balance , BlockNumber>   RunTime<AccountId , Nonce , Balance , BlockNumber> where 
-    AccountId : Ord + Clone,
-    Nonce : Copy + CheckedAdd + Zero + CheckedSub + Integer,
-    Balance : Copy + CheckedAdd + Zero + CheckedSub + Integer,
-    BlockNumber : Copy + CheckedAdd + Zero + CheckedSub + Integer,
-{
+impl <T:Config>   RunTime<T> {
     pub fn new() -> Self {
         Self {
             balance: balances::Pallet::new(),

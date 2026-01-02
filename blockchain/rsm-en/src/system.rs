@@ -1,48 +1,44 @@
 use std::collections::BTreeMap;
+use num::{CheckedAdd, CheckedSub, Zero,Integer,One};
 
-use num::{CheckedAdd, CheckedSub, Integer, Zero};
+use crate::traits::{Config};
 
 #[derive(Debug)]
-pub struct Pallet<AccountId, Nonce, BlockNumber> {
-    block_number: BlockNumber,  // number of blocks . 
-    nonce: BTreeMap<AccountId , Nonce>, // count of transactions per account
+pub struct Pallet<T:Config> {
+    block_number: T::BlockNumber,  // number of blocks . 
+    nonce: BTreeMap<T::AccountId , T::Nonce>, // count of transactions per account
 }
 
 
-impl<AccountId, Nonce, BlockNumber> Pallet<AccountId, Nonce, BlockNumber> where 
-
-AccountId : Ord + Clone,
-Nonce : Copy + CheckedAdd + Zero + CheckedSub + Integer,
-BlockNumber : Copy + CheckedAdd + Zero + CheckedSub + Integer,
-
+impl<T:Config> Pallet<T>
 {
     pub fn new() -> Self {
         Self {
-            block_number: BlockNumber::zero(),
+            block_number: T::BlockNumber::zero(),
             nonce: BTreeMap::new(),
         }
     }
 
-    pub fn set_block_number(&mut self, number: BlockNumber) {
+    pub fn set_block_number(&mut self, number: T::BlockNumber) {
         self.block_number = number;
     }
 
     pub fn inc_block_number(&mut self) {
         // crashes on overflow 
-        self.block_number = self.block_number.checked_add(&BlockNumber::one()).unwrap();
+        self.block_number = self.block_number.checked_add(&T::BlockNumber::one()).unwrap();
     }
 
-    pub fn get_block_number(&self) -> BlockNumber {
+    pub fn get_block_number(&self) -> T::BlockNumber {
         self.block_number
     }
 
-    pub fn inc_nonce(&mut self, account: &AccountId) {
-        let current_nonce = *self.nonce.get(account).unwrap_or(&Nonce::zero());
-        self.nonce.insert(account.clone(), current_nonce + Nonce::one());
+    pub fn inc_nonce(&mut self, account: &T::AccountId) {
+        let current_nonce = *self.nonce.get(account).unwrap_or(&T::Nonce::zero());
+        self.nonce.insert(account.clone(), current_nonce + T::Nonce::one());
     }
 
-    pub fn get_nonce(&self, account: &AccountId) -> Nonce {
-        *self.nonce.get(account).unwrap_or(&Nonce::zero())
+    pub fn get_nonce(&self, account: &T::AccountId) -> T::Nonce {
+        *self.nonce.get(account).unwrap_or(&T::Nonce::zero())
     }
 
 }

@@ -1,15 +1,24 @@
-use crate::runtime::RunTime;
 
+use crate::{runtime::RunTime, traits::Config};
+mod traits;
 mod balances;
 mod runtime;
 mod system;
-mod types;
 
-type RunTimeType = RunTime<String, u32, u128, u32>;
+
+#[derive(Debug)]
+pub struct  TestConfig;
+
+impl Config for TestConfig {
+    type AccountId = String;
+    type Nonce = u64;
+    type Balance = u64;
+    type BlockNumber = u64;
+}
 
 fn main() {
 
-    let mut runtime: RunTimeType = RunTime::new();
+    let mut runtime: RunTime<TestConfig> = RunTime::new();
 
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();
@@ -45,7 +54,7 @@ fn main() {
 
 #[test]
 fn test_runtime() {
-    let mut runtime : RunTimeType = RunTime::new();
+    let mut runtime : RunTime<TestConfig> = RunTime::new();
 
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();

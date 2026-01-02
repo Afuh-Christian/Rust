@@ -2,34 +2,33 @@ use std::collections::BTreeMap;
 
 use num::{CheckedAdd, CheckedSub, Zero};
 
+use crate::traits::Config;
+
 
 
 
 #[derive(Debug)]
-pub struct Pallet<AccountId, Balance> {
-     balances : BTreeMap<AccountId, Balance>,
+pub struct Pallet<T:Config> {
+     balances : BTreeMap<T::AccountId, T::Balance>,
 }
 
 
-impl <AccountId, Balance> Pallet<AccountId, Balance> where 
-AccountId : Ord + Clone,
-Balance :  CheckedAdd + CheckedSub + Zero + Copy
-{
+impl <T:Config> Pallet<T> {
     pub fn new() -> Self {
         Self {
             balances: BTreeMap::new(),
         }
     }
 
-    pub fn set_balance(&mut self, account: &AccountId, amount: Balance) {
+    pub fn set_balance(&mut self, account: &T::AccountId, amount: T::Balance) {
         self.balances.insert(account.clone(), amount);
     }
 
-    pub fn balance(&self, account: &AccountId) -> Balance {   
-        *self.balances.get(account).unwrap_or(&Balance::zero())
+    pub fn balance(&self, account: &T::AccountId) -> T::Balance {   
+        *self.balances.get(account).unwrap_or(&T::Balance::zero())
     }
 
-    pub fn transfer(&mut self, from: &AccountId, to: &AccountId, amount: Balance) -> Result<(), &'static str> {
+    pub fn transfer(&mut self, from: &T::AccountId, to: &T::AccountId, amount: T::Balance) -> Result<(), &'static str> {
         
         let from_balance = self.balance(&from).checked_sub(&amount).ok_or("Insufficient balance")?;
         let to_balance = self.balance(&to).checked_add(&amount).ok_or("Overflow")?;
