@@ -4,6 +4,7 @@ mod traits;
 mod balances;
 mod runtime;
 mod system;
+mod support;
 
 
 #[derive(Debug)]
@@ -39,10 +40,7 @@ fn main() {
     let _ =  runtime.balance.transfer(&alice, &charlie, 30) 
     .map_err(|e| println!("Error : {:?}" , e));
 
-
     println!("Runtime State: {:#?}", runtime);
-
-
 
 }
 
