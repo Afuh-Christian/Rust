@@ -7,6 +7,36 @@ mod system;
 mod support;
 
 
+
+mod types {
+
+    use crate::support;
+
+  pub type AccountId = String;
+  pub type Balance = u128;
+  pub type BlockNumber = u32;
+  pub type Nonce = u32;
+  pub type Extrinsic = support::Extrinsic<AccountId, crate::RuntimeCall>;
+  pub type Header = support::Header<BlockNumber>;
+  pub type Block = support::Block<Header, Extrinsic>;
+  // TODO: Define a concrete `Extrinsic` type using `AccountId` and `RuntimeCall`.
+  // TODO: Define a concrete `Header` type using `BlockNumber`.
+  // TODO: Define a concrete `Block` type using `Header` and `Extrinsic`.
+}
+
+
+
+
+
+pub enum RuntimeCall{
+
+}
+
+
+
+
+
+
 #[derive(Debug)]
 pub struct  TestConfig;
 
@@ -19,7 +49,7 @@ impl Config for TestConfig {
 
 fn main() {
 
-    let mut runtime: RunTime<TestConfig> = RunTime::new();
+    let mut runtime: RunTime = RunTime::new();
 
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();
@@ -52,7 +82,7 @@ fn main() {
 
 #[test]
 fn test_runtime() {
-    let mut runtime : RunTime<TestConfig> = RunTime::new();
+    let mut runtime : RunTime = RunTime::new();
 
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();

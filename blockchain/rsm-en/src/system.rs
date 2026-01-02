@@ -1,7 +1,23 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, fmt::Debug, ops::AddAssign};
 use num::{CheckedAdd, CheckedSub, Zero,Integer,One};
 
-use crate::traits::{Config};
+// use crate::traits::{Config};
+
+pub trait Config {
+    type AccountId: Ord + Clone + Debug;
+    type Nonce: Clone + Copy + CheckedAdd + CheckedSub + Integer + Debug;
+    type BlockNumber: Clone
+        + Copy
+        + AddAssign
+        + One
+        + Zero
+        + CheckedAdd
+        + CheckedSub
+        + Integer
+        + Debug;
+}
+
+
 
 #[derive(Debug)]
 pub struct Pallet<T:Config> {
