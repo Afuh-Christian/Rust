@@ -39,17 +39,15 @@ impl <T:Config> Pallet<T> {
         *self.balances.get(account).unwrap_or(&T::Balance::zero())
     }
 
-    pub fn transfer(&mut self, from: &T::AccountId, to: &T::AccountId, amount: T::Balance) -> Result<(), &'static str> {
+    pub fn transfer(&mut self, caller: &T::AccountId, to: &T::AccountId, amount: T::Balance) -> Result<(), &'static str> {
         
-        let from_balance = self.balance(&from).checked_sub(&amount).ok_or("Insufficient balance")?;
-        let to_balance = self.balance(&to).checked_add(&amount).ok_or("Overflow")?;
+        let from_balance = self.balance(&caller.clone()).checked_sub(&amount).ok_or("Insufficient balance")?;
+        let to_balance = self.balance(&to.clone()).checked_add(&amount).ok_or("Overflow")?;
 
-   
-     self.set_balance(&from, from_balance);
-     self.set_balance(&to, to_balance);
+        self.set_balance(&caller.clone(), from_balance);
+        self.set_balance(&to.clone(), to_balance);
 
-
-     Ok(())
+        Ok(())
     }
 
 

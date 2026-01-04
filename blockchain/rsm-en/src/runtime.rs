@@ -1,4 +1,9 @@
-use crate::{RuntimeCall, balances, support::{self, Dispatch}, system, types};
+use crate::{ balances, support::{self, Dispatch}, system, types};
+
+
+pub enum RuntimeCall{
+  BalancesTransfer{ to: types::AccountId, amount: types::Balance} // Our dispatch already knows who the caller is
+}
 
 
 
@@ -36,7 +41,7 @@ impl RunTime {
     }
 
     // Execute a block of extrinsics. Increments the block number.
-fn execute_block(&mut self, block: types::Block) -> support::DispatchResult {
+pub fn execute_block(&mut self, block: types::Block) -> support::DispatchResult {
 
 
 
@@ -60,13 +65,13 @@ fn execute_block(&mut self, block: types::Block) -> support::DispatchResult {
 
   for (i , support::Extrinsic { caller, call }) in block.extrinsics.into_iter().enumerate() {
   self.system.inc_nonce(&caller);
-    let _ = self.dispatch(caller, call)
+  let _ = self.dispatch(caller, call)
     .inspect_err(|e| {
         eprintln!(
-  "Extrinsic Error\n\tBlock Number: {}\
-\n\tExtrinsic Number: {}\n\tError: {}",
-  block.header.block_number, 1, e
-);;
+    "Extrinsic Error\n\tBlock Number: {}\
+    \n\tExtrinsic Number: {}\n\tError: {}",
+    block.header.block_number, 1, e
+    );
     });
 
 }
@@ -96,6 +101,11 @@ impl crate::support::Dispatch for RunTime {
     caller: Self::Caller,
     runtime_call: Self::Call,
   ) -> support::DispatchResult {
-    unimplemented!();
-  }
+   match runtime_call {
+    RuntimeCall::BalancesTransfer { to, amount } => {
+  self.balance.transfer(&caller, &to, amount)?;
+}
+   }
+Ok(())
+}
 }
