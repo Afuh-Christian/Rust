@@ -2,7 +2,7 @@ use crate::{ balances, support::{self, Dispatch}, system, types};
 
 
 pub enum RuntimeCall{
-  BalancesTransfer{ to: types::AccountId, amount: types::Balance} // Our dispatch already knows who the caller is
+  Balances(balances::Call<RunTime>),
 }
 
 
@@ -101,11 +101,11 @@ impl crate::support::Dispatch for RunTime {
     caller: Self::Caller,
     runtime_call: Self::Call,
   ) -> support::DispatchResult {
+
    match runtime_call {
-    RuntimeCall::BalancesTransfer { to, amount } => {
-  self.balance.transfer(&caller, &to, amount)?;
-}
+      RuntimeCall::Balances(call) =>  {self.balance.dispatch(caller, call)?;}
    }
-Ok(())
+
+   Ok(())
 }
 }

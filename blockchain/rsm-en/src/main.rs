@@ -64,13 +64,13 @@ let block_1 = types::Block {
     // transfer 69 from alice to bob
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::BalancesTransfer { to: bob.clone(), amount: 30 },
+      call: RuntimeCall::Balances(balances::Call::Transfer { to: bob.clone(), amount: 30 }),
     },
 
      // transfer 30 from bob to charlie
        support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::BalancesTransfer { to: charlie.clone(), amount: 20 },
+      call: RuntimeCall::Balances(balances::Call::Transfer { to: charlie.clone(), amount: 20 }),
     },
   ],
 };
@@ -83,19 +83,19 @@ let block_2 = types::Block {
     // transfer 69 from alice to bob
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::BalancesTransfer { to: bob.clone(), amount: 30 },
+      call: RuntimeCall::Balances(balances::Call::Transfer { to: bob.clone(), amount: 30 }),
     },
 
      // transfer 30 from bob to charlie
        support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::BalancesTransfer { to: charlie.clone(), amount: 20 },
+      call: RuntimeCall::Balances(balances::Call::Transfer { to: charlie.clone(), amount: 20 }),
     },
 
         // transfer 30 from bob to charlie
        support::Extrinsic {
       caller: bob.clone(),
-      call: RuntimeCall::BalancesTransfer { to: alice.clone(), amount: 25 },
+      call: RuntimeCall::Balances(balances::Call::Transfer { to: alice.clone(), amount: 25 }),
     },
   ],
 };
