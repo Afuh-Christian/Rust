@@ -1,6 +1,8 @@
 use core::fmt::{ Debug };
 use std::collections::BTreeMap;
 
+use crate::support::DispatchResult;
+
 pub trait Config: crate::system::Config {
     /// The type which represents the content that can be claimed using this pallet.
     /// Could be the content directly as bytes, or better yet the hash of that content.
@@ -28,4 +30,92 @@ impl<T: Config> Pallet<T> {
     pub fn new() -> Self {
         Self { claims: BTreeMap::new() }
     }
+
+
+    /// Get the owner (if any) of a claim.
+pub fn get_claim(&self, claim: &T::Content) -> Option<&T::AccountId> {
+   self.claims.get(claim)
+}
+
+/// Create a new claim on behalf of the `caller`.
+/// This function will return an error if someone already has claimed that content.
+pub fn create_claim(&mut self, caller: T::AccountId, claim: T::Content) -> DispatchResult {
+    // TODO: Check that a `claim` does not already exist. If so, return an error.
+    /* TODO: Insert the claim on behalf of `caller`. */
+    match self.get_claim(&claim){
+        Some(_owner) => { return Err("Claim already exists"); },
+        None => { self.claims.insert(claim, caller); }
+    }
+    Ok(())
+}
+
+
+/// Revoke an existing claim on some content.
+/// This function should only succeed if the caller is the owner of an existing claim.
+/// It will return an error if the claim does not exist, or if the caller is not the owner.
+pub fn revoke_claim(&mut self, caller: T::AccountId, claim: T::Content) -> DispatchResult {
+    // TODO: Implement revoke logic
+    let claim_owner = self.get_claim(&claim).ok_or("Claim does not exist")?; 
+
+    if claim_owner != &caller {
+        return Err("Caller is not the owner of the claim");
+    }
+
+    self.claims.remove(&claim);
+
+    Ok(())
+}
+
+
+}
+
+
+
+
+#[cfg(test)]
+mod test {
+
+  struct TestConfig;
+
+  impl super::Config for TestConfig {
+    type Content = &'static str;
+  }
+
+
+
+impl crate::system::Config for TestConfig {
+  type AccountId = &'static str;
+  type BlockNumber = u32;
+  type Nonce = u32;
+}
+
+
+    #[test]
+fn proof_of_existence_test() {
+
+     // Create a new instance of the Proof of Existence Module.
+ let mut poe  = super::Pallet::<TestConfig>::new();
+
+ let _ = poe.create_claim("alice",  "my_document");
+
+ assert_eq!(poe.get_claim(&"my_document"), Some(&"alice"));
+
+// assert_eq!(poe.get_claim(&"alice"), None);  
+
+let res = poe.revoke_claim( "bob",  "my_document");
+assert_eq!(res, Err("Caller is not the owner of the claim"));
+
+let res = poe.create_claim( "bob",  "my_document");
+assert_eq!(res, Err("Claim already exists"));
+
+let res = poe.revoke_claim( "alice",  "non existent");
+assert_eq!(res, Err("Claim does not exist"));
+
+let res = poe.revoke_claim( "alice",  "my_document");
+assert_eq!(res, Ok(()));
+
+
+assert_eq!(poe.get_claim(&"my_document"), None);
+
+}
 }

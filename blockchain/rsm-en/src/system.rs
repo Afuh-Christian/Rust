@@ -60,55 +60,55 @@ impl<T:Config> Pallet<T>
 }
 
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    // #[test]
-    // fn test_block_number() {
-    //     let mut pallet = Pallet::new();
-    //     assert_eq!(pallet.get_block_number(), 0);
-    //     pallet.set_block_number(5);
-    //     assert_eq!(pallet.get_block_number(), 5);
-    //     pallet.inc_block_number();
-    //     assert_eq!(pallet.get_block_number(), 6);
-    // }
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     // #[test]
+//     // fn test_block_number() {
+//     //     let mut pallet = Pallet::new();
+//     //     assert_eq!(pallet.get_block_number(), 0);
+//     //     pallet.set_block_number(5);
+//     //     assert_eq!(pallet.get_block_number(), 5);
+//     //     pallet.inc_block_number();
+//     //     assert_eq!(pallet.get_block_number(), 6);
+//     // }
 
-    // #[test]
-    // fn test_nonce() {
-    //     let mut pallet = Pallet::new();
-    //     let account = "Alice".to_string();
-    //     assert_eq!(pallet.get_nonce(&account), 0);
-    //     pallet.inc_nonce(&account);
-    //     assert_eq!(pallet.get_nonce(&account), 1);
-    //     pallet.inc_nonce(&account);
-    //     assert_eq!(pallet.get_nonce(&account), 2);
-    // }
+//     // #[test]
+//     // fn test_nonce() {
+//     //     let mut pallet = Pallet::new();
+//     //     let account = "Alice".to_string();
+//     //     assert_eq!(pallet.get_nonce(&account), 0);
+//     //     pallet.inc_nonce(&account);
+//     //     assert_eq!(pallet.get_nonce(&account), 1);
+//     //     pallet.inc_nonce(&account);
+//     //     assert_eq!(pallet.get_nonce(&account), 2);
+//     // }
 
 
-    // #[test]
-    // fn test_nonce_different_accounts() {
-    //     let mut pallet = Pallet::new();
-    //     let account1 = "Bob".to_string();
-    //     let account2 = "Charlie".to_string();
-    //     assert_eq!(pallet.get_nonce(&account1), 0);
-    //     assert_eq!(pallet.get_nonce(&account2), 0);
-    //     pallet.inc_nonce(&account1);
-    //     assert_eq!(pallet.get_nonce(&account1), 1);
-    //     assert_eq!(pallet.get_nonce(&account2), 0);
-    // }
+//     // #[test]
+//     // fn test_nonce_different_accounts() {
+//     //     let mut pallet = Pallet::new();
+//     //     let account1 = "Bob".to_string();
+//     //     let account2 = "Charlie".to_string();
+//     //     assert_eq!(pallet.get_nonce(&account1), 0);
+//     //     assert_eq!(pallet.get_nonce(&account2), 0);
+//     //     pallet.inc_nonce(&account1);
+//     //     assert_eq!(pallet.get_nonce(&account1), 1);
+//     //     assert_eq!(pallet.get_nonce(&account2), 0);
+//     // }
 
-    // // write test for incrementing nonce and block number for multiple accounts
-    // #[test]
-    // fn test_nonce_multiple_accounts() {
-    //     let mut pallet = Pallet::new();
-    //     let account1 = "Bob".to_string();
-    //     let account2 = "Charlie".to_string();
-    //     assert_eq!(pallet.get_nonce(&account1), 0);
-    //     assert_eq!(pallet.get_nonce(&account2), 0);
-    //     pallet.inc_nonce(&account1);
-    //     pallet.inc_nonce(&account2);
-    //     assert_eq!(pallet.get_nonce(&account1), 1);
-    //     assert_eq!(pallet.get_nonce(&account2), 1);
-    // }
+//     // // write test for incrementing nonce and block number for multiple accounts
+//     // #[test]
+//     // fn test_nonce_multiple_accounts() {
+//     //     let mut pallet = Pallet::new();
+//     //     let account1 = "Bob".to_string();
+//     //     let account2 = "Charlie".to_string();
+//     //     assert_eq!(pallet.get_nonce(&account1), 0);
+//     //     assert_eq!(pallet.get_nonce(&account2), 0);
+//     //     pallet.inc_nonce(&account1);
+//     //     pallet.inc_nonce(&account2);
+//     //     assert_eq!(pallet.get_nonce(&account1), 1);
+//     //     assert_eq!(pallet.get_nonce(&account2), 1);
+//     // }
 
-}
+// }
