@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 
 use crate::support::{Dispatch, DispatchResult};
 
+
 pub trait Config: crate::system::Config {
     /// The type which represents the content that can be claimed using this pallet.
     /// Could be the content directly as bytes, or better yet the hash of that content.

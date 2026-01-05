@@ -1,8 +1,9 @@
-use crate::{ balances, support::{self, Dispatch}, system, types};
+use crate::{ balances, proof_of_existence, support::{self, Dispatch}, system, types};
 
 
 pub enum RuntimeCall{
   Balances(balances::Call<RunTime>),
+  ProofOfExistence(proof_of_existence::Call<RunTime>),
 }
 
 
@@ -18,8 +19,13 @@ impl system::Config for RunTime {
 impl balances::Config for RunTime {
   type AccountId = types::AccountId;
   type Balance = types::Balance;
-   type BlockNumber = types::BlockNumber;
+  type BlockNumber = types::BlockNumber;
 }
+
+impl proof_of_existence::Config for RunTime {
+  type Content = types::Content;
+}
+
 
 
 
@@ -27,6 +33,7 @@ impl balances::Config for RunTime {
 pub struct RunTime{
   pub  balance :balances::Pallet<RunTime>, 
   pub system : system::Pallet<RunTime>,
+  pub proof_of_existence : proof_of_existence::Pallet<RunTime>,
 }
 
 
@@ -37,6 +44,7 @@ impl RunTime {
         Self {
             balance: balances::Pallet::new(),
             system: system::Pallet::new(),
+            proof_of_existence: proof_of_existence::Pallet::new(),
         }
     }
 
@@ -104,6 +112,7 @@ impl crate::support::Dispatch for RunTime {
 
    match runtime_call {
       RuntimeCall::Balances(call) =>  {self.balance.dispatch(caller, call)?;}
+      RuntimeCall::ProofOfExistence(call) =>  {self.proof_of_existence.dispatch(caller, call)?;}
    }
 
    Ok(())
