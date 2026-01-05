@@ -5,6 +5,7 @@ mod balances;
 mod runtime;
 mod system;
 mod support;
+mod proof_of_existence;
 
 
 
