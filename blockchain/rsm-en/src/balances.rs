@@ -2,6 +2,8 @@ use std::{collections::BTreeMap, fmt::Debug, ops::AddAssign};
 
 use num::{CheckedAdd, CheckedSub, Integer, One, Zero};
 
+use crate::support::{Dispatch, DispatchResult};
+
 pub trait Config {
     type AccountId: Ord + Clone + Debug;
     type Balance: Clone + Copy + CheckedAdd + CheckedSub + Integer + Debug;
@@ -14,6 +16,33 @@ pub trait Config {
         + CheckedSub
         + Integer
         + Debug;
+}
+
+
+pub enum Call<T:Config>{
+    Transfer {
+        to: T::AccountId,
+        amount: T::Balance,
+    },
+    // Other balance-related calls can be added here.
+
+    // RemoveMe(core::marker::PhantomData<T>),
+}
+
+
+
+
+impl<T: Config> Dispatch for Pallet<T> {
+    type Caller = T::AccountId;
+    type Call = Call<T>;
+
+    fn dispatch(&mut self, caller: Self::Caller, call: Self::Call) -> DispatchResult {
+        match call {
+            Call::Transfer { to, amount } => {self.transfer(&caller, &to, amount)?; }
+        }
+
+      Ok(())
+    }
 }
 
 
