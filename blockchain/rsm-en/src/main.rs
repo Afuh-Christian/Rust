@@ -120,7 +120,7 @@ let block_2 = types::Block {
     // Alice revokes her own claim
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::RevokeClaim { claim: "my_document_3" }),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::RevokeClaim { claim: "my_document" }),
     },
   ],
 };
