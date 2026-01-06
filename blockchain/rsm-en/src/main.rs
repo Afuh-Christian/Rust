@@ -102,8 +102,34 @@ let block_2 = types::Block {
   ],
 };
 
+  let block_3 = types::Block {
+  header: support::Header { block_number: 3 },
+  extrinsics: vec![
+    // Alice creates a claim
+    support::Extrinsic {
+      caller: alice.clone(),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::CreateClaim { claim: "my_document" }),
+    },
+
+    // Bob tries to revoke Alice's claim (should fail)
+    support::Extrinsic {
+      caller: bob.clone(),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::CreateClaim { claim: "my_document_2" }),
+    },
+
+    // Alice revokes her own claim
+    support::Extrinsic {
+      caller: alice.clone(),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::RevokeClaim { claim: "my_document_3" }),
+    },
+  ],
+};
+
+
+
    runtime.execute_block(block_1).expect("panic!");
    runtime.execute_block(block_2).expect("panic!");
+   runtime.execute_block(block_3).expect("panic!");
 
    println!("Runtime State: {:#?}", runtime);
 
