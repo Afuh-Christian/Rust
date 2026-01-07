@@ -14,7 +14,7 @@ pub fn expand_runtime(def: RuntimeDef) -> proc_macro2::TokenStream {
 	let runtime_impl = quote! {
 		impl #runtime_struct {
 			// Create a new instance of the main Runtime, by creating a new instance of each pallet.
-			fn new() -> Self {
+			pub fn new() -> Self {
 				Self {
 					// Since system is not included in the list of pallets, we manually add it here.
 					system: <system::Pallet::<Self>>::new(),
@@ -25,7 +25,7 @@ pub fn expand_runtime(def: RuntimeDef) -> proc_macro2::TokenStream {
 			}
 
 			// Execute a block of extrinsics. Increments the block number.
-			fn execute_block(&mut self, block: types::Block) -> crate::support::DispatchResult {
+			pub fn execute_block(&mut self, block: types::Block) -> crate::support::DispatchResult {
 				self.system.inc_block_number();
 				if block.header.block_number != self.system.block_number() {
 					return Err(&"block number does not match what is expected")
@@ -52,7 +52,7 @@ pub fn expand_runtime(def: RuntimeDef) -> proc_macro2::TokenStream {
 		// The parsed function names will be `snake_case`, and that will show up in the enum.
 		#[allow(non_camel_case_types)]
 		pub enum RuntimeCall {
-			#( #pallet_names(#pallet_names::Call<#runtime_struct>) ),*
+		 	#( #pallet_names(#pallet_names::Call<#runtime_struct>) ),*
 		}
 
 		impl crate::support::Dispatch for #runtime_struct {

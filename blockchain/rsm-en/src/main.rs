@@ -1,5 +1,5 @@
 
-use crate::{runtime::{RunTime, RuntimeCall}, traits::Config};
+use crate::{runtime::{Runtime, RuntimeCall}, traits::Config};
 mod traits;
 mod balances;
 mod runtime;
@@ -45,14 +45,14 @@ fn main() {
 
 
 
-       let mut runtime: RunTime = RunTime::new();
+       let mut runtime = Runtime::new();
 
      
     let alice: String = "alice".to_string();
     let bob: String = "bob".to_string();
     let charlie: String = "charlie".to_string();
 
-      runtime.balance.set_balance(&alice, 100);
+      runtime.balances.set_balance(&alice, 100);
 
 
 // Define a block with two extrinsics:
@@ -63,13 +63,13 @@ let block_1 = types::Block {
     // transfer 69 from alice to bob
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::Balances(balances::Call::transfer { to: bob.clone(), amount: 30 }),
+      call: RuntimeCall::balances(balances::Call::transfer { to: bob.clone(), amount: 30 }),
     },
 
      // transfer 30 from bob to charlie
        support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::Balances(balances::Call::transfer { to: charlie.clone(), amount: 20 }),
+      call: RuntimeCall::balances(balances::Call::transfer { to: charlie.clone(), amount: 20 }),
     },
   ],
 };
@@ -82,19 +82,19 @@ let block_2 = types::Block {
     // transfer 69 from alice to bob
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::Balances(balances::Call::transfer { to: bob.clone(), amount: 30 }),
+      call: RuntimeCall::balances(balances::Call::transfer { to: bob.clone(), amount: 30 }),
     },
 
      // transfer 30 from bob to charlie
        support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::Balances(balances::Call::transfer { to: charlie.clone(), amount: 20 }),
+      call: RuntimeCall::balances(balances::Call::transfer { to: charlie.clone(), amount: 20 }),
     },
 
         // transfer 30 from bob to charlie
        support::Extrinsic {
       caller: bob.clone(),
-      call: RuntimeCall::Balances(balances::Call::transfer { to: alice.clone(), amount: 25 }),
+      call: RuntimeCall::balances(balances::Call::transfer { to: alice.clone(), amount: 25 }),
     },
   ],
 };
@@ -105,19 +105,19 @@ let block_2 = types::Block {
     // Alice creates a claim
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::create_claim { claim: "my_document" }),
+      call: RuntimeCall::proof_of_existence(proof_of_existence::Call::create_claim { claim: "my_document" }),
     },
 
     // Bob tries to revoke Alice's claim (should fail)
     support::Extrinsic {
       caller: bob.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::create_claim { claim: "my_document_2" }),
+      call: RuntimeCall::proof_of_existence(proof_of_existence::Call::create_claim { claim: "my_document_2" }),
     },
 
     // Alice revokes her own claim
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::revoke_claim { claim: "my_document" }),
+      call: RuntimeCall::proof_of_existence(proof_of_existence::Call::revoke_claim { claim: "my_document" }),
     },
   ],
 };

@@ -21,8 +21,8 @@ pub trait Config {
 
 #[derive(Debug)]
 pub struct Pallet<T:Config> {
-    block_number: T::BlockNumber,  // number of blocks . 
-    nonce: BTreeMap<T::AccountId , T::Nonce>, // count of transactions per account
+   pub block_number: T::BlockNumber,  // number of blocks . 
+    pub nonce: BTreeMap<T::AccountId , T::Nonce>, // count of transactions per account
 }
 
 
@@ -44,7 +44,7 @@ impl<T:Config> Pallet<T>
         self.block_number = self.block_number.checked_add(&T::BlockNumber::one()).unwrap();
     }
 
-    pub fn get_block_number(&self) -> T::BlockNumber {
+    pub fn block_number(&self) -> T::BlockNumber {
         self.block_number
     }
 
