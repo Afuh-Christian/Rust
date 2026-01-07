@@ -105,19 +105,19 @@ let block_2 = types::Block {
     // Alice creates a claim
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::CreateClaim { claim: "my_document" }),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::create_claim { claim: "my_document" }),
     },
 
     // Bob tries to revoke Alice's claim (should fail)
     support::Extrinsic {
       caller: bob.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::CreateClaim { claim: "my_document_2" }),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::create_claim { claim: "my_document_2" }),
     },
 
     // Alice revokes her own claim
     support::Extrinsic {
       caller: alice.clone(),
-      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::RevokeClaim { claim: "my_document" }),
+      call: RuntimeCall::ProofOfExistence(proof_of_existence::Call::revoke_claim { claim: "my_document" }),
     },
   ],
 };
