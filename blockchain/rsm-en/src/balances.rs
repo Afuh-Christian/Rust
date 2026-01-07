@@ -19,38 +19,28 @@ pub trait Config {
 }
 
 
-pub enum Call<T:Config>{
-    Transfer {
-        to: T::AccountId,
-        amount: T::Balance,
-    },
-    // Other balance-related calls can be added here.
-
-    // RemoveMe(core::marker::PhantomData<T>),
-}
-
-
-
-
-impl<T: Config> Dispatch for Pallet<T> {
-    type Caller = T::AccountId;
-    type Call = Call<T>;
-
-    fn dispatch(&mut self, caller: Self::Caller, call: Self::Call) -> DispatchResult {
-        match call {
-            Call::Transfer { to, amount } => {self.transfer(&caller, &to, amount)?; }
-        }
-
-      Ok(())
-    }
-}
-
 
 
 #[derive(Debug)]
 pub struct Pallet<T:Config> {
      balances : BTreeMap<T::AccountId, T::Balance>,
 }
+
+#[macros::call]
+impl <T:Config> Pallet<T> {
+
+        pub fn transfer(&mut self, caller: T::AccountId, to: T::AccountId, amount: T::Balance) -> Result<(), &'static str> {
+        
+        let from_balance = self.balance(&caller.clone()).checked_sub(&amount).ok_or("Insufficient balance")?;
+        let to_balance = self.balance(&to.clone()).checked_add(&amount).ok_or("Overflow")?;
+
+        self.set_balance(&caller.clone(), from_balance);
+        self.set_balance(&to.clone(), to_balance);
+
+        Ok(())
+    }
+}
+
 
 
 impl <T:Config> Pallet<T> {
@@ -68,16 +58,7 @@ impl <T:Config> Pallet<T> {
         *self.balances.get(account).unwrap_or(&T::Balance::zero())
     }
 
-    pub fn transfer(&mut self, caller: &T::AccountId, to: &T::AccountId, amount: T::Balance) -> Result<(), &'static str> {
-        
-        let from_balance = self.balance(&caller.clone()).checked_sub(&amount).ok_or("Insufficient balance")?;
-        let to_balance = self.balance(&to.clone()).checked_add(&amount).ok_or("Overflow")?;
 
-        self.set_balance(&caller.clone(), from_balance);
-        self.set_balance(&to.clone(), to_balance);
-
-        Ok(())
-    }
 
 
 
