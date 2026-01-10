@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<body>
+  <button onclick="send()">Send</button>
+  <pre id="out"></pre>
+
+  <script>
+    const ws = new WebSocket("ws://localhost:3000/");
+    const out = document.getElementById("out");
+
+    ws.onmessage = e =>{
+
+      console.log("Message received from server:", e.data); 
+
+      return  out.textContent += "echo: " + JSON.stringify(e.data) + "\n"
+    };
+    
+    ws.onopen = () => out.textContent += "connected\n";
+
+    function send() {
+      const json = { "messages": "hello from html and us" };
+      ws.send(JSON.stringify(json));
+    }
+  </script>
+</body>
+</html>

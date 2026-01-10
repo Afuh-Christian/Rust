@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<body>
+  <h3>Hyperliquid WebSocket Prices</h3>
+  <pre id="out"></pre>
+
+  <script>
+    // 🔹 Hyper Liquid WebSocket endpoint
+
+    const ws = new WebSocket("wss://api.hyperliquid.xyz/ws");
+    const out = document.getElementById("out");
+
+    function log(msg) {
+      out.textContent += msg + "\n";
+    }
+
+    ws.onopen = () => {
+      log("✅ connected to Hyperliquid");
+      
+      // 🔥 Subscribe to BTC trades (live prices)
+      ws.send(JSON.stringify({
+        method: "subscribe",
+        subscription: {
+          type: "trades",
+          coin: "BTC"
+        }
+      }));
+    };
+
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+
+      console.log("e.data" , data)
+
+      // Trades payload
+      if (data.channel === "trades") {
+        for (const trade of data.data) {
+          log(
+            `BTC price: ${trade.p} | size: ${trade.s} | side: ${trade.side}`
+          );
+        }
+      } else {
+        // other messages (sub confirmations, pings, etc.)
+        log("ℹ️ " + e.data);
+      }
+    };
+
+    ws.onerror = (err) => {
+      log("❌ error");
+      console.error(err);
+    };
+
+    ws.onclose = () => {
+      log("❌ connection closed");
+    };
+  </script>
+</body>
+</html>
