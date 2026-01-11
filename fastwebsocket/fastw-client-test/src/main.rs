@@ -2,7 +2,6 @@ use crate::websocket_client::connect;
 use fastwebsockets::{FragmentCollector, Frame, OpCode, Payload};
 
 mod websocket_client;
-use bytes::{Bytes, BytesMut}; 
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
