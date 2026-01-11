@@ -2,7 +2,7 @@ use crate::websocket_client::connect;
 use fastwebsockets::{FragmentCollector, Frame, OpCode, Payload};
 
 mod websocket_client;
-use bytes::BytesMut; 
+use bytes::{Bytes, BytesMut}; 
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -20,20 +20,21 @@ let sub = serde_json::json!({
     }
 });
 
-//  let frame = Frame::new(payload, OpCode::Text, None, true);
+ 
+// let frame = Frame::text(
+//     Payload::Bytes(sub.to_string().into_bytes().into())
+// );
 
-//  let data = "Hello, world!" ;//.as_bytes();
- let payload = Payload::Bytes(BytesMut::from(sub.to_string().as_bytes()));
 
+let json = sub.to_string();
 
-    // Create a new text frame. The 'true' indicates this is the final frame of the message.
-    let frame = Frame::new(true, OpCode::Binary, None, payload); // Masking is handled internally for client-to-server
+let frame = Frame::text(
+    Payload::Bytes(json.as_str().into())
+);
 
-    // Send the frame over the WebSocket connection
-    ws.write_frame(frame).await?;
-    // or use the sink method
-    // ws.send(frame).await?;
+// ws.write_frame(frame).await?;
 
+ws.write_frame(frame).await?;
 
     loop {
         let frame = ws.read_frame().await?;

@@ -6,18 +6,22 @@ edition = "2024"
 [dependencies]
 anyhow = "1.0.100"
 bytes = "1.11.0"
+
+# WebSocket / HTTP
 fastwebsockets = { version = "0.10.0", features = ["upgrade"] }
 http-body-util = "0.1.3"
 hyper = "1.8.1"
 hyper-util = "0.1.19"
-rustls = "0.23.36"
-rustls-native-certs = "0.8.3"
-serde_json = "1.0.149"
+
+# Async runtime
 tokio = { version = "1.49.0", features = ["full"] }
+
+# TLS — PURE RUST (no OpenSSL)
+rustls = "0.23.36"
 tokio-rustls = "0.26.4"
 webpki-roots = "1.0.5"
-# anyhow = "1.0.100"
-# fastwebsockets = { version = "0.10.0", features = ["with_axum", "upgrade"] }
-# http-body-util = "0.1.3"
-# hyper = "1.8.1"
-# tokio = { version = "1.49.0", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+
