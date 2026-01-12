@@ -35,14 +35,14 @@ pub async fn arb_engine(
             };
 
             // print the prices here with the respective coins and pairs .. 
-   println!(
-        "📊 {:?} | Binance {}USDT: {:.2} | Hyperliquid {}: {:.2}",
-        coin,
-        format!("{:?}", coin),
-        bin,
-        format!("{:?}", coin),
-        hl
-    );
+//    println!(
+//         "📊 {:?} | Binance {}USDT: {:.2} | Hyperliquid {}: {:.2}",
+//         coin,
+//         format!("{:?}", coin),
+//         bin,
+//         format!("{:?}", coin),
+//         hl
+//     );
             let spread_usd = bin - hl;
             let edge_pct = spread_usd / bin;
 
