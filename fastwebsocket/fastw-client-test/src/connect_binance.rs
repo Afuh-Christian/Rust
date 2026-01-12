@@ -15,6 +15,8 @@ use anyhow::Result;
 
 use serde::Deserialize;
 
+use crate::SharedPrices;
+
 #[derive(Debug, Deserialize)]
 struct BinanceTrade {
     p: String, // price
@@ -75,7 +77,7 @@ where
     }
 }
 
-pub async fn run_binance() -> anyhow::Result<()> {
+pub async fn run_binance(prices: SharedPrices) -> anyhow::Result<()> {
     let ws = connect_binance("btcusdt").await?;
     let mut ws = FragmentCollector::new(ws);
 
@@ -95,11 +97,14 @@ pub async fn run_binance() -> anyhow::Result<()> {
 
     if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
         if let Ok(price) = trade.p.parse::<f64>()   {
+
+          
+
             if last_binance_price == Some(price) {
                 continue; // Skip if price hasn't changed
             }
-            last_binance_price = Some(price);
-            println!("🟡 Binance BTCUSDT price: {}", price);
+                let mut p = prices.lock().await;
+                 p.binance = Some(price);
                 }
             }
         }

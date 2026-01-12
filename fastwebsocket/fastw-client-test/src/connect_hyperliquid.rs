@@ -12,6 +12,8 @@ use std::{future::Future, sync::Arc};
 use anyhow::Result;
 use serde::Deserialize;
 
+use crate::SharedPrices;
+
 #[derive(Debug, Deserialize)]
 struct HlTradesMsg {
     data: Vec<HlTrade>,
@@ -85,7 +87,7 @@ where
 
 
 
-pub async fn run_hyperliquid() -> anyhow::Result<()> {
+pub async fn run_hyperliquid(prices: SharedPrices) -> anyhow::Result<()> {
     let ws = connect_hyperliquid().await?;
     let mut ws = FragmentCollector::new(ws);
 
@@ -122,15 +124,15 @@ let mut last_hyperliquid_price: Option<f64> = None;
     if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
         if let Some(trade) = msg.data.last() {
             if let Ok(price) = trade.px.parse::<f64>() {
+                
                 if last_hyperliquid_price == Some(price) {
                     continue; // Skip if price hasn't changed
                 }
-                last_hyperliquid_price = Some(price);
-                println!("🟣 Hyperliquid BTC price: {}", price);
+                let mut p = prices.lock().await;
+                     p.hyperliquid = Some(price);
             }
         }
     }
 }
-
     }
 }
