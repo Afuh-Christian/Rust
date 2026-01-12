@@ -13,6 +13,14 @@ use hyper_util::rt::tokio::TokioIo;
 use std::{future::Future, sync::Arc};
 use anyhow::Result;
 
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+struct BinanceTrade {
+    p: String, // price
+}
+
+
 pub async fn connect_binance(
     symbol: &str,
 ) -> Result<WebSocket<TokioIo<Upgraded>>> {
@@ -73,12 +81,27 @@ pub async fn run_binance() -> anyhow::Result<()> {
 
     println!("🟡 Binance connected");
 
+    let mut last_binance_price: Option<f64> = None;
+
     loop {
         let frame = ws.read_frame().await?;
 
+        // if frame.opcode == OpCode::Text {
+        //     let text = String::from_utf8_lossy(&frame.payload);
+        //     println!("🟡 Binance: {}", text);
+        // }
         if frame.opcode == OpCode::Text {
-            let text = String::from_utf8_lossy(&frame.payload);
-            println!("🟡 Binance: {}", text);
+    let text = String::from_utf8_lossy(&frame.payload);
+
+    if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
+        if let Ok(price) = trade.p.parse::<f64>()   {
+            if last_binance_price == Some(price) {
+                continue; // Skip if price hasn't changed
+            }
+            last_binance_price = Some(price);
+            println!("🟡 Binance BTCUSDT price: {}", price);
+                }
+            }
         }
     }
 }

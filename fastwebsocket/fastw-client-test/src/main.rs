@@ -8,14 +8,12 @@ mod connect_binance;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
 
-
-
-
-
     let (hl_res, binance_res) = tokio::join!(
         run_hyperliquid(),
         run_binance(),
     );
+
+    print!("Done");
 
     // Handle errors explicitly
     hl_res?;
