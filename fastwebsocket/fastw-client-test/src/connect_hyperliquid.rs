@@ -1,4 +1,4 @@
-use fastwebsockets::{handshake, WebSocket};
+use fastwebsockets::{FragmentCollector, Frame, OpCode, Payload, WebSocket, handshake};
 use hyper::{
     Request,
     body::Bytes,
@@ -12,7 +12,11 @@ use std::{future::Future, sync::Arc};
 use anyhow::Result;
 
 
-pub async fn connect_hyperliquid( address:&'static str,  port:u16 ) -> Result<WebSocket<hyper_util::rt::tokio::TokioIo<Upgraded>>> {
+pub async fn connect_hyperliquid() -> Result<WebSocket<hyper_util::rt::tokio::TokioIo<Upgraded>>> {
+   
+   let address: &'static str = "api.hyperliquid.xyz";
+   let port: u16 = 443;
+   
     // let stream = TcpStream::connect("127.0.0.1:3000").await?;
 
       // 1️⃣ TCP
@@ -63,5 +67,40 @@ where
 {
     fn execute(&self, fut: Fut) {
         tokio::spawn(fut);
+    }
+}
+
+
+
+
+pub async fn run_hyperliquid() -> anyhow::Result<()> {
+    let ws = connect_hyperliquid().await?;
+    let mut ws = FragmentCollector::new(ws);
+
+    println!("🟣 Hyperliquid connected");
+
+    let sub = serde_json::json!({
+    "method": "subscribe",
+    "subscription": {
+        "type": "trades",
+        "coin": "BTC"
+    }
+});
+
+let json = sub.to_string();
+
+let frame = Frame::text(
+    Payload::Bytes(json.as_str().into())
+);
+
+ws.write_frame(frame).await?;
+
+    loop {
+        let frame = ws.read_frame().await?;
+
+        if frame.opcode == OpCode::Text {
+            let text = String::from_utf8_lossy(&frame.payload);
+            println!("🟣 HL: {}", text);
+        }
     }
 }

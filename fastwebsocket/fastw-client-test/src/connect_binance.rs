@@ -1,4 +1,4 @@
-use fastwebsockets::{handshake, WebSocket};
+use fastwebsockets::{FragmentCollector, OpCode, WebSocket, handshake};
 use hyper::{
     Request,
     body::Bytes,
@@ -64,5 +64,21 @@ where
 {
     fn execute(&self, fut: Fut) {
         tokio::spawn(fut);
+    }
+}
+
+pub async fn run_binance() -> anyhow::Result<()> {
+    let ws = connect_binance("btcusdt").await?;
+    let mut ws = FragmentCollector::new(ws);
+
+    println!("🟡 Binance connected");
+
+    loop {
+        let frame = ws.read_frame().await?;
+
+        if frame.opcode == OpCode::Text {
+            let text = String::from_utf8_lossy(&frame.payload);
+            println!("🟡 Binance: {}", text);
+        }
     }
 }
