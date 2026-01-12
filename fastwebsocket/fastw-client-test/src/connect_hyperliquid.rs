@@ -100,7 +100,7 @@ ws.write_frame(frame).await?;
 
         if frame.opcode == OpCode::Text {
             let text = String::from_utf8_lossy(&frame.payload);
-            println!("🟣 HL: {}", text);
+            println!("🟣 Hyper Liquid : {}", text);
         }
     }
 }
