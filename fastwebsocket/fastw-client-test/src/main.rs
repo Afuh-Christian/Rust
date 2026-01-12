@@ -7,7 +7,8 @@ mod websocket_client;
 async fn main() -> anyhow::Result<()> {
     // let mut ws = connect().await?;
 
-    let wsd = connect().await?;
+    let wsd = connect("api.hyperliquid.xyz", 443 ).await?;
+
 let mut ws = FragmentCollector::new(wsd);
     println!("✅ Connected to Hyperliquid");
 
