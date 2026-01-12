@@ -10,19 +10,9 @@ use tokio::net::TcpStream;
 use tokio_rustls::TlsConnector;
 use std::{future::Future, sync::Arc};
 use anyhow::Result;
-use serde::Deserialize;
 
-use crate::SharedPrices;
+use crate::{SharedPrices, types_enums::{Coin, HlTradesMsg}};
 
-#[derive(Debug, Deserialize)]
-struct HlTradesMsg {
-    data: Vec<HlTrade>,
-}
-
-#[derive(Debug, Deserialize)]
-struct HlTrade {
-    px: String, // price as string
-}
 
 
 
@@ -116,21 +106,36 @@ ws.write_frame(frame).await?;
         if frame.opcode == OpCode::Text {
     let text = String::from_utf8_lossy(&frame.payload);
 
-       println!(" 🟣 Hyper Liquid => {}" , text);
-
-    // if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
-    //     if let Some(trade) = msg.data.last() {
-    //         if let Ok(price) = trade.px.parse::<f64>() {
-    //             let mut p = prices.lock().await;
-    //             if p.hyperliquid == Some(price) {
-    //                 continue; // Skip if price hasn't changed
-    //             }
-    //             // print binance price here .
-    //             println!();
-    //                  p.hyperliquid = Some(price);
-    //         }
-    //     }
-    // }
+    if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
+        if let Some(trade) = msg.data.last() {
+            if let Some(coin) = Coin::from_hyperliquid(&trade.coin) {
+                if let Ok(price) = trade.px.parse::<f64>() {
+                    let mut p = prices.lock().await;
+                    p.hyperliquid.insert(coin, price);
+                }
+            }
+        }
+    }
 }
+
+//         if frame.opcode == OpCode::Text {
+//     let text = String::from_utf8_lossy(&frame.payload);
+
+//        println!(" 🟣 Hyper Liquid => {}" , text);
+
+//     // if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
+//     //     if let Some(trade) = msg.data.last() {
+//     //         if let Ok(price) = trade.px.parse::<f64>() {
+//     //             let mut p = prices.lock().await;
+//     //             if p.hyperliquid == Some(price) {
+//     //                 continue; // Skip if price hasn't changed
+//     //             }
+//     //             // print binance price here .
+//     //             println!();
+//     //                  p.hyperliquid = Some(price);
+//     //         }
+//     //     }
+//     // }
+// }
     }
 }

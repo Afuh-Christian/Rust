@@ -13,14 +13,9 @@ use hyper_util::rt::tokio::TokioIo;
 use std::{future::Future, sync::Arc};
 use anyhow::Result;
 
-use serde::Deserialize;
 
-use crate::SharedPrices;
+use crate::{ SharedPrices, types_enums::{BinanceCombinedMsg, Coin}};
 
-#[derive(Debug, Deserialize)]
-struct BinanceTrade {
-    p: String, // price
-}
 
 
 pub async fn connect_binance(
@@ -102,9 +97,6 @@ pub async fn run_binance(prices: SharedPrices , pairs : Vec<String> ) -> anyhow:
     let mut ws = FragmentCollector::new(ws);
 
     println!("🟡 Binance connected");
-
-    let mut last_binance_price: Option<f64> = None;
-
     loop {
         let frame = ws.read_frame().await?;
 
@@ -112,22 +104,41 @@ pub async fn run_binance(prices: SharedPrices , pairs : Vec<String> ) -> anyhow:
         //     let text = String::from_utf8_lossy(&frame.payload);
         //     println!("🟡 Binance: {}", text);
         // }
-        if frame.opcode == OpCode::Text {
-    let text = String::from_utf8_lossy(&frame.payload);
+      
+    //     if frame.opcode == OpCode::Text {
+    // let text = String::from_utf8_lossy(&frame.payload);
 
-     println!(" 🟡 Binance => {}" , text);
-    // if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
-    //     if let Ok(price) = trade.p.parse::<f64>()   {
+    //  println!(" 🟡 Binance => {}" , text);
+    // // if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
+    // //     if let Ok(price) = trade.p.parse::<f64>()   {
 
           
 
-    //         if last_binance_price == Some(price) {
-    //             continue; // Skip if price hasn't changed
-    //         }
-    //             let mut p = prices.lock().await;
-    //              p.binance = Some(price);
-    //             }
-    //         }
+    // //         if last_binance_price == Some(price) {
+    // //             continue; // Skip if price hasn't changed
+    // //         }
+    // //             let mut p = prices.lock().await;
+    // //              p.binance = Some(price);
+    // //             }
+    // //         }
+
+
+
+    //     }
+
+        if frame.opcode == OpCode::Text {
+    let text = String::from_utf8_lossy(&frame.payload);
+
+    if let Ok(msg) = serde_json::from_str::<BinanceCombinedMsg>(&text) {
+        if let Some(coin) = Coin::from_binance_symbol(&msg.data.s) {
+            if let Ok(price) = msg.data.p.parse::<f64>() {
+                let mut p = prices.lock().await;
+                p.binance.insert(coin, price);
+            }
         }
+    }
+}
+
+
     }
 }
