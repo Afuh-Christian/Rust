@@ -85,19 +85,19 @@ where
 }
 
 
-
-
-pub async fn run_hyperliquid(prices: SharedPrices) -> anyhow::Result<()> {
+pub async fn run_hyperliquid(prices: SharedPrices , coins:Vec<&str>) -> anyhow::Result<()> {
     let ws = connect_hyperliquid().await?;
     let mut ws = FragmentCollector::new(ws);
 
-    println!("🟣 Hyperliquid connected");
+println!("🟣 Hyperliquid connected");
 
+for coin in coins {
+ 
     let sub = serde_json::json!({
     "method": "subscribe",
     "subscription": {
         "type": "trades",
-        "coin": "BTC"
+        "coin": coin
     }
 });
 
@@ -109,30 +109,28 @@ let frame = Frame::text(
 
 ws.write_frame(frame).await?;
 
-let mut last_hyperliquid_price: Option<f64> = None;
+}
 
     loop {
         let frame = ws.read_frame().await?;
-
-        // if frame.opcode == OpCode::Text {
-        //     let text = String::from_utf8_lossy(&frame.payload);
-        //     println!("🟣 Hyper Liquid : {}", text);
-        // }
         if frame.opcode == OpCode::Text {
     let text = String::from_utf8_lossy(&frame.payload);
 
-    if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
-        if let Some(trade) = msg.data.last() {
-            if let Ok(price) = trade.px.parse::<f64>() {
-                
-                if last_hyperliquid_price == Some(price) {
-                    continue; // Skip if price hasn't changed
-                }
-                let mut p = prices.lock().await;
-                     p.hyperliquid = Some(price);
-            }
-        }
-    }
+       println!(" 🟣 Hyper Liquid => {}" , text);
+
+    // if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
+    //     if let Some(trade) = msg.data.last() {
+    //         if let Ok(price) = trade.px.parse::<f64>() {
+    //             let mut p = prices.lock().await;
+    //             if p.hyperliquid == Some(price) {
+    //                 continue; // Skip if price hasn't changed
+    //             }
+    //             // print binance price here .
+    //             println!();
+    //                  p.hyperliquid = Some(price);
+    //         }
+    //     }
+    // }
 }
     }
 }

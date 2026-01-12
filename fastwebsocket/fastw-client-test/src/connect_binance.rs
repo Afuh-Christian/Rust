@@ -24,7 +24,8 @@ struct BinanceTrade {
 
 
 pub async fn connect_binance(
-    symbol: &str,
+    // symbol: &str,
+     pairs : Vec<String> 
 ) -> Result<WebSocket<TokioIo<Upgraded>>> {
     let host = "stream.binance.com";
     let port = 9443;
@@ -44,11 +45,30 @@ pub async fn connect_binance(
     let domain = ServerName::try_from(host)?;
     let tls_stream = connector.connect(domain, stream).await?;
 
-    // 3️⃣ WebSocket handshake (NO subscription frame)
+
+    let streams = pairs
+    .iter()
+    .map(|p| format!("{}@trade", p))
+    .collect::<Vec<_>>()
+    .join("/");
+
     let uri = format!(
-        "wss://{host}:9443/ws/{}@trade",
-        symbol.to_lowercase()
-    );
+    "wss://{host}:9443/stream?streams={}",
+    streams
+);
+
+
+    // for pair in pairs.iter() {
+
+    // }
+
+    // 3️⃣ WebSocket handshake (NO subscription frame)
+    // let uri = format!(
+    //     "wss://{host}:9443/ws/{}@trade",
+    //     symbol.to_lowercase()
+    // );
+
+
 
     let req = Request::builder()
         .method("GET")
@@ -77,8 +97,8 @@ where
     }
 }
 
-pub async fn run_binance(prices: SharedPrices) -> anyhow::Result<()> {
-    let ws = connect_binance("btcusdt").await?;
+pub async fn run_binance(prices: SharedPrices , pairs : Vec<String> ) -> anyhow::Result<()> {
+    let ws = connect_binance(pairs).await?;
     let mut ws = FragmentCollector::new(ws);
 
     println!("🟡 Binance connected");
@@ -95,18 +115,19 @@ pub async fn run_binance(prices: SharedPrices) -> anyhow::Result<()> {
         if frame.opcode == OpCode::Text {
     let text = String::from_utf8_lossy(&frame.payload);
 
-    if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
-        if let Ok(price) = trade.p.parse::<f64>()   {
+     println!(" 🟡 Binance => {}" , text);
+    // if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
+    //     if let Ok(price) = trade.p.parse::<f64>()   {
 
           
 
-            if last_binance_price == Some(price) {
-                continue; // Skip if price hasn't changed
-            }
-                let mut p = prices.lock().await;
-                 p.binance = Some(price);
-                }
-            }
+    //         if last_binance_price == Some(price) {
+    //             continue; // Skip if price hasn't changed
+    //         }
+    //             let mut p = prices.lock().await;
+    //              p.binance = Some(price);
+    //             }
+    //         }
         }
     }
 }
