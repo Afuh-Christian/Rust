@@ -100,32 +100,6 @@ pub async fn run_binance(prices: SharedPrices , pairs : Vec<String> ) -> anyhow:
     loop {
         let frame = ws.read_frame().await?;
 
-        // if frame.opcode == OpCode::Text {
-        //     let text = String::from_utf8_lossy(&frame.payload);
-        //     println!("🟡 Binance: {}", text);
-        // }
-      
-    //     if frame.opcode == OpCode::Text {
-    // let text = String::from_utf8_lossy(&frame.payload);
-
-    //  println!(" 🟡 Binance => {}" , text);
-    // // if let Ok(trade) = serde_json::from_str::<BinanceTrade>(&text) {
-    // //     if let Ok(price) = trade.p.parse::<f64>()   {
-
-          
-
-    // //         if last_binance_price == Some(price) {
-    // //             continue; // Skip if price hasn't changed
-    // //         }
-    // //             let mut p = prices.lock().await;
-    // //              p.binance = Some(price);
-    // //             }
-    // //         }
-
-
-
-    //     }
-
         if frame.opcode == OpCode::Text {
     let text = String::from_utf8_lossy(&frame.payload);
 

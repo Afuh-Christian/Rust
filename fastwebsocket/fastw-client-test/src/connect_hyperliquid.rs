@@ -21,8 +21,6 @@ pub async fn connect_hyperliquid() -> Result<WebSocket<hyper_util::rt::tokio::To
    let address: &'static str = "api.hyperliquid.xyz";
    let port: u16 = 443;
    
-    // let stream = TcpStream::connect("127.0.0.1:3000").await?;
-
       // 1️⃣ TCP
     let stream = TcpStream::connect(format!("{}:{}", address, port)).await?;
 
@@ -118,24 +116,5 @@ ws.write_frame(frame).await?;
     }
 }
 
-//         if frame.opcode == OpCode::Text {
-//     let text = String::from_utf8_lossy(&frame.payload);
-
-//        println!(" 🟣 Hyper Liquid => {}" , text);
-
-//     // if let Ok(msg) = serde_json::from_str::<HlTradesMsg>(&text) {
-//     //     if let Some(trade) = msg.data.last() {
-//     //         if let Ok(price) = trade.px.parse::<f64>() {
-//     //             let mut p = prices.lock().await;
-//     //             if p.hyperliquid == Some(price) {
-//     //                 continue; // Skip if price hasn't changed
-//     //             }
-//     //             // print binance price here .
-//     //             println!();
-//     //                  p.hyperliquid = Some(price);
-//     //         }
-//     //     }
-//     // }
-// }
     }
 }
