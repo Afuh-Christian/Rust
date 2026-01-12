@@ -32,7 +32,7 @@ pub type SharedInventory = Arc<Mutex<Inventory>>;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // set coins here ..... / 
-    let coins = vec!["BTC"]; 
+    let coins = vec!["BTC", "SOL", "ETH"]; 
     let pairs: Vec<String> = coins.iter().map(|c|format!("{}usdt", c.to_lowercase())).collect();
     // ...... 
 
