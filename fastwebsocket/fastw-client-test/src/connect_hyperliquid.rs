@@ -12,7 +12,7 @@ use std::{future::Future, sync::Arc};
 use anyhow::Result;
 
 
-pub async fn connect( address:&'static str,  port:u16 ) -> Result<WebSocket<hyper_util::rt::tokio::TokioIo<Upgraded>>> {
+pub async fn connect_hyperliquid( address:&'static str,  port:u16 ) -> Result<WebSocket<hyper_util::rt::tokio::TokioIo<Upgraded>>> {
     // let stream = TcpStream::connect("127.0.0.1:3000").await?;
 
       // 1️⃣ TCP
