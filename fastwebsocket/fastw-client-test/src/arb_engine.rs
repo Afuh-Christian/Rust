@@ -1,5 +1,5 @@
 use crate::{SharedInventory, SharedPrices, types_enums::Coin};
-
+use chrono::Local;
 
 fn coin_color(coin: Coin) -> &'static str {
     match coin {
@@ -88,9 +88,12 @@ pub async fn arb_engine(
             // ── 4️⃣ SIGNAL ──
            let color = coin_color(coin);
 
+let now = Local::now().format("%H:%M:%S%.3f"); // hh:mm:ss.millis
+
 println!(
-    "{}⚡ {:?} | Buy HL @ {:.2} | Sell Binance @ {:.2} | Spread ${:.2} | Edge {:.3}%{}",
+    "{}[{}] ⚡ {:?} | Buy HL @ {:.2} | Sell Binance @ {:.2} | Spread ${:.2} | Edge {:.3}%{}",
     color,
+    now,
     coin,
     hl,
     bin,
