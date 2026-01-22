@@ -52,8 +52,6 @@ pub struct BinanceTrade {
 }
 
 
-
-
 // hyper liquid parsing .. 
 
 #[derive(Debug, Deserialize)]
