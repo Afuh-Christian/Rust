@@ -115,6 +115,5 @@ ws.write_frame(frame).await?;
         }
     }
 }
-
-    }
+}
 }

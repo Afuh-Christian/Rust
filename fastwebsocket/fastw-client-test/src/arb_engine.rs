@@ -18,7 +18,6 @@ pub async fn arb_engine(
     inventory: SharedInventory,
 ) {
     // ── CONFIG ──
-    const MIN_EDGE_USD: f64 = 40.0;   // absolute floor
     const MIN_EDGE_PCT: f64 = 0.0015; // 0.15%
     const MIN_USDT: f64 = 200.0;
 
