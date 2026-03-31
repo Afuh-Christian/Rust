@@ -27,6 +27,11 @@ impl Transaction {
             nonce
         }
     }
+
+}
+
+
+
 /// Helper function to generate a deterministic but realistic Transaction
 pub fn generate_tx(nonce: u64) -> Transaction {
     let mut rng = rand::rng();
@@ -59,5 +64,4 @@ pub fn generate_tx(nonce: u64) -> Transaction {
         size: rng.random_range(100..500),                // Random size
         nonce,
     }
-}
 }

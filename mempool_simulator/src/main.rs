@@ -1,22 +1,28 @@
 
 mod modules;
-use std::collections::BTreeSet;
-
-use crate::modules::reverse_gas::ReverseGas;
+use crate::modules::{naive_mempool::NaiveMempool, transaction_model::{Transaction, generate_tx}, types::GasPrice};
 
 // Example usage
 fn main() {
-    let mut set = BTreeSet::new();
+    let mut mempool = NaiveMempool::new(); 
+    let tx1 = generate_tx(1);
+    let tx2 = generate_tx(2);
+    let tx3 = generate_tx(3);
+    let tx4 = generate_tx(4);
+    let tx5 = generate_tx(5);
+    mempool.add(&tx1);
+    mempool.add(&tx2);
+    mempool.add(&tx3);
+    mempool.add(&tx4);
+    mempool.add(&tx5);
 
-    // Insert Gas Prices: 10, 50, 100
-    set.insert((ReverseGas(10), "tx_low"));
-    set.insert((ReverseGas(100), "tx_high"));
-    set.insert((ReverseGas(50), "tx_med"));
 
-    // Check the "Front" (First element)
-    let first = set.iter().next().unwrap();
-    
-    // Because we used ReverseGas, the set is sorted: [100, 50, 10]
-    // So the front is 100 (Highest Gas Price).
-    println!("Front of set: {:?}", first.0); // Prints: ReverseGas(100)
+  println!("All transactions in mempool : {:?}", mempool.get_all().iter().map(|tx| &tx.gas_price).cloned().collect::<Vec<GasPrice>>() );
+  println!("Best price in mempool : {:?}", mempool.get_best_price().unwrap());
+  println!("Best transaction in mempool : {:?}", mempool.get_best(2).iter().map(|tx| &tx.gas_price).collect::<Vec<&GasPrice>>() );
+
+   mempool.remove_worst(); 
+
+    println!("All transactions in mempool : {:?}", mempool.get_all().iter().map(|tx| &tx.gas_price).collect::<Vec<&GasPrice>>() );
 }
+
