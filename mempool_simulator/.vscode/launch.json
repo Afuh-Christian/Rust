@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable",
+      "cargo": {
+        "args": [
+          "build"
+        ]
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/target/debug/${workspaceFolderBasename}"
+    }
+  ]
+}
