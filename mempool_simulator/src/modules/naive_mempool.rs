@@ -1,4 +1,3 @@
-use core::hash;
 use std::{ collections::BTreeSet, sync::{ Arc, atomic::AtomicU64 } };
 
 use dashmap::DashMap;
@@ -45,10 +44,10 @@ impl NaiveMempool {
             {
 
                 let reference_gas = self.return_worst_lock(&read_lock).cloned(); 
-                 drop(read_lock);
+               
 
                 if let Some(ref_gas) =  reference_gas {
-                    
+                      drop(read_lock);
 
                 let mut write_lock = self.txs_by_gas_price.write();
 
@@ -254,49 +253,5 @@ impl NaiveMempool {
         mined_txs
     }
 
-    // ... other methods ...
-
-    // pub fn mine_block(&self, max_gas: u64) -> Vec<Transaction> {
-    //     // 1. ACQUIRE READ LOCK
-    //     let read_lock = self.txs_by_gas_price.read();
-
-    //     let mut gas_used = 0;
-    //     let mut candidates: Vec<(ReverseGas, TxHash)> = Vec::new();
-
-    //     // 2. ITERATE ALL (Don't use take_while)
-    //     // We iterate through the sorted set (Best -> Worst)
-    //     for (rev_gas, hash) in read_lock.iter() {
-    //         // We need the gas limit. We access DashMap while holding the ReadLock.
-    //         // This is safe because DashMap allows concurrent read/write,
-    //         // and the BTreeSet ReadLock allows concurrent reads.
-    //         if let Some(tx) = self.txs_store.get(hash) {
-    //             if gas_used + tx.gas_limit <= max_gas {
-    //                 gas_used += tx.gas_limit;
-    //                 candidates.push((rev_gas.clone(), hash.clone()));
-    //             }
-    //             // Optimization: If block is nearly full, we could break early,
-    //             // but we must continue checking smaller txs.
-    //         }
-    //     }
-
-    //     // 3. RELEASE READ LOCK
-    //     drop(read_lock);
-
-    //     // 4. ACQUIRE WRITE LOCK FOR REMOVAL
-    //     let mut write_lock = self.txs_by_gas_price.write();
-    //     let mut mined_txs = Vec::new();
-
-    //     for (price_key, hash) in candidates {
-    //         // Remove from priority index
-    //         if write_lock.remove(&(price_key, hash.clone())) {
-    //             // Remove from storage
-    //             if let Some((_, tx)) = self.txs_store.remove(&hash) {
-    //                 mined_txs.push(tx);
-    //                 self.total_mined.fetch_add(1, std::sync::atomic::Ordering::Relaxed); // FIX: Track mined, not evicted
-    //             }
-    //         }
-    //     }
-
-    //     mined_txs
-    // }
+  
 }
