@@ -1,4 +1,4 @@
-use std::{ collections::BTreeSet, sync::{ Arc, atomic::AtomicU64 } };
+use std::{ collections::BTreeSet, sync::{ Arc, atomic::{AtomicU64, Ordering} } };
 
 use dashmap::DashMap;
 use parking_lot::{ RwLock, RwLockReadGuard, RwLockWriteGuard };
@@ -54,7 +54,8 @@ impl NaiveMempool {
                 if self.remove_worst_lock(&mut write_lock , &ref_gas).is_some() {
                 self.txs_store.insert(tx.hash, tx.clone());
                 write_lock.insert((ReverseGas(tx.gas_price), tx.hash));
-                self.total_added.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                 }else {
+
                  } // else: eviction failed, skip insert silently
 
 
@@ -73,6 +74,7 @@ impl NaiveMempool {
             let mut write_lock = self.txs_by_gas_price.write();
             self.txs_store.insert(tx.hash, tx.clone());
             write_lock.insert((ReverseGas(tx.gas_price), tx.hash));
+
         }
 
         self.total_added.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
@@ -157,27 +159,7 @@ impl NaiveMempool {
         }
     }
 
-    // pub fn remove_worst_lock(
-    //     &self,
-    //     write_lock: &mut RwLockWriteGuard<'_, BTreeSet<(ReverseGas, TxHash)>>
-    // ) -> Option<Transaction> {
-    //     // Find the worst (highest gas price in reverse sort? No, usually worst is lowest fee)
-    //     // Assuming ReverseGas sorts High->Low, iter().next_back() is the lowest fee.
-    //     if let Some((price_key, hash)) = write_lock.iter().next_back().cloned() {
-    //         write_lock.remove(&(price_key, hash.clone()));
-    //         // drop(write_lock); // Release lock immediately after modification
-    //         if let Some(tx) = self.txs_store.remove(&hash) {
-    //             self.total_evicted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    //             Some(tx.1)
-    //         } else {
-    //             // Data inconsistency — BTreeSet and DashMap drifted apart
-    //             // Silently skip rather than panic
-    //             None
-    //         }
-    //     } else {
-    //         None
-    //     }
-    // }
+
 
    pub fn remove_worst_lock(
         &self,
@@ -218,10 +200,12 @@ impl NaiveMempool {
 
     pub fn mine_block(&self, max_gas: u64) -> Vec<Transaction> {
         let mut gas_used = 0;
-        let read_lock = self.txs_by_gas_price.read();
+       
 
         // Get Data and release lock fast .
-        let hashes: Vec<(ReverseGas, TxHash)> = read_lock
+        let hashes: Vec<&(ReverseGas, TxHash)> = {
+            let read_lock = self.txs_by_gas_price.read();
+            read_lock
             .iter()
             .filter_map(|obj| {
                 if let Some(tx) = self.get_by_hash(&obj.1) {
@@ -235,23 +219,67 @@ impl NaiveMempool {
                     None
                 }
             })
-            .cloned()
-            .collect();
-        drop(read_lock);
+            // .cloned()
+            .collect()
+        }; // read lock is dropped here . 
 
+      {  
         let mut write_lock = self.txs_by_gas_price.write();
-        let mut mined_txs = Vec::new();
-        for (price_key, hash) in hashes {
+        for hash in hashes {
             // Remove from price tree
-            write_lock.remove(&(price_key, hash.clone()));
+            write_lock.remove(hash);
             // Remove from store
-            if let Some(tx) = self.txs_store.remove(&hash) {
-                mined_txs.push(tx.1);
-                self.total_mined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-            }
+            // if let Some(tx) = self.txs_store.remove(&hash) {
+            //     mined_txs.push(tx.1);
+            //     self.total_mined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            // }
         }
-        mined_txs
+    } 
+    
+    //     // Phase 3: remove from DashMap with no locks held
+    hashes.into_iter().filter_map(|(_, hash)| {
+        self.txs_store.remove(hash).map(|(_, tx)| {
+            self.total_mined.fetch_add(1, Ordering::Relaxed);
+            tx
+        })
+    }).collect()
+
+    // write lock is droped here . 
     }
 
-  
+//   pub fn mine_block(&self, max_gas: u64) -> Vec<Transaction> {
+//     let mut gas_used = 0u64;
+
+//     // Phase 1: select candidates under read lock
+//     let hashes: Vec<(ReverseGas, TxHash)> = {
+//         let read_lock = self.txs_by_gas_price.read();
+//         read_lock.iter().filter_map(|obj| {
+//             if let Some(tx) = self.txs_store.get(&obj.1) {
+//                 if gas_used + tx.gas_limit <= max_gas {
+//                     gas_used += tx.gas_limit;
+//                     return Some(obj.clone());
+//                 }
+//             }
+//             None
+//         }).collect()
+//     }; // ← read lock dropped here
+
+//     // Phase 2: remove from BTreeSet only — write lock is brief
+//     {
+//         let mut write_lock = self.txs_by_gas_price.write();
+//         for entry in &hashes {
+//             write_lock.remove(entry);
+//         }
+//     } // ← write lock dropped here
+
+//     // Phase 3: remove from DashMap with no locks held
+//     hashes.into_iter().filter_map(|(_, hash)| {
+//         self.txs_store.remove(&hash).map(|(_, tx)| {
+//             self.total_mined.fetch_add(1, Ordering::Relaxed);
+//             tx
+//         })
+//     }).collect()
+// }
+
+
 }
